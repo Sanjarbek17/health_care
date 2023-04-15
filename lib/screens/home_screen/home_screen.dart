@@ -20,10 +20,12 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Container(
+                padding: const EdgeInsets.all(10),
                 color: Colors.red,
                 child: Row(
                   children: [
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
@@ -42,7 +44,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         // small title text
-                        const Text(appBarLeadingText),
+                        Text(
+                          appBarLeadingText,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
                       ],
                     ),
                   ],

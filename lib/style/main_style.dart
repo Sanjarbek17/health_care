@@ -19,5 +19,9 @@ ThemeData theme = ThemeData(
       fontWeight: FontWeight.w900,
       color: Colors.white,
     ),
+    titleSmall: TextStyle(
+      fontSize: 15,
+      color: Colors.white,
+    ),
   ),
 );
