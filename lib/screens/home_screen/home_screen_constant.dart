@@ -1,7 +1,7 @@
 // main screen appbar title
 const String appBarTitle = '103';
 // main screen appbar leading text
-const String appBarLeadingText = 'Звонок в 103';
+const String appBarLeadingText = 'служба скорой помощи в Самарканде';
 
 // 103 image path
 const String image_103 = 'assets/logo1034.png';
