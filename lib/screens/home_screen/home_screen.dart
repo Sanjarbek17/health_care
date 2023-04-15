@@ -24,19 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: const Center(child: Text('103')),
         bottomNavigationBar: BottomAppBar(
-          color: Colors.blue,
           shape: const CircularNotchedRectangle(),
           child: Row(
+            // we're gonna change this  to active and inactive images
             children: [
-              IconButton(icon: Icon(Icons.menu), onPressed: () {}),
-              Spacer(),
-              IconButton(icon: Icon(Icons.search), onPressed: () {}),
-              IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+              IconButton(icon: Image.asset(ambulance), onPressed: () {}),
+              IconButton(icon: Image.asset(profile), onPressed: () {}),
+              const Spacer(),
+              IconButton(icon: Image.asset(spravochnik), onPressed: () {}),
+              IconButton(icon: Image.asset(info), onPressed: () {}),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-            elevation: 2, child: Image.asset(image_103), onPressed: () {}),
+            elevation: 2,
+            child: Image.asset(
+              image_103,
+            ),
+            onPressed: () {}),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
