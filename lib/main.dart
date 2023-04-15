@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import './style/main_style.dart';
 
-import 'screens/home_screen.dart';
+import 'screens/home_screen/home_screen.dart';
 
 void main() {
   runApp(const MainRoute());
