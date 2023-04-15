@@ -8,7 +8,7 @@ const String image_103 = 'assets/logo1034.png';
 // ambulance image path
 const String ambulance = 'assets/map_grey.png';
 // ambulance active image path
-const String ambulanceActive = 'assets/map_red.png';
+const String ambulanceActive = 'assets/maps_red.png';
 // profile image path
 const String profile = 'assets/profil_grey.png';
 // profile active image path
@@ -21,3 +21,5 @@ const String spravochnikActive = 'assets/spravochnik_red.png';
 const String info = 'assets/info_grey.png';
 // info active image path
 const String infoActive = 'assets/info_red.png';
+// splash screen image path
+const String splashImage = 'assets/splash_image.jpg';
