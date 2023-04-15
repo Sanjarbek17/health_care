@@ -1,18 +1,23 @@
+// main screen appbar title
+const String appBarTitle = '103';
+// main screen appbar leading text
+const String appBarLeadingText = 'Звонок в 103';
+
 // 103 image path
-String image_103 = 'assets/logo1034.png';
+const String image_103 = 'assets/logo1034.png';
 // ambulance image path
-String ambulance = 'assets/map_grey.png';
+const String ambulance = 'assets/map_grey.png';
 // ambulance active image path
-String ambulanceActive = 'assets/map_red.png';
+const String ambulanceActive = 'assets/map_red.png';
 // profile image path
-String profile = 'assets/profil_grey.png';
+const String profile = 'assets/profil_grey.png';
 // profile active image path
-String profileActive = 'assets/profil_red.png';
+const String profileActive = 'assets/profil_red.png';
 // spravochnik image path
-String spravochnik = 'assets/spravochnik_grey.png';
+const String spravochnik = 'assets/spravochnik_grey.png';
 // spravochnik active image path
-String spravochnikActive = 'assets/spravochnik_red.png';
+const String spravochnikActive = 'assets/spravochnik_red.png';
 // info image path
-String info = 'assets/info_grey.png';
+const String info = 'assets/info_grey.png';
 // info active image path
-String infoActive = 'assets/info_red.png';
+const String infoActive = 'assets/info_red.png';
