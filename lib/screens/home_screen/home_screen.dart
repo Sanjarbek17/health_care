@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
         body: const Center(child: Text('103')),
         bottomNavigationBar: BottomAppBar(
           color: Colors.blue,
-          shape: CircularNotchedRectangle(),
+          shape: const CircularNotchedRectangle(),
           child: Row(
             children: [
               IconButton(icon: Icon(Icons.menu), onPressed: () {}),
