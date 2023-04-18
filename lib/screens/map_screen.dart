@@ -1,12 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'constants.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
+
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  late final StreamController<LocationMarkerPosition> positionStreamController;
+  late final StreamController<LocationMarkerHeading> headingStreamController;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +67,24 @@ class MapScreen extends StatelessWidget {
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
+                ),
+                CurrentLocationLayer(
+                  style: LocationMarkerStyle(
+                    marker: DefaultLocationMarker(
+                      // color: Colors.transparent,
+                      child: Image.asset(
+                        'assets/gps_map_car.png',
+                      ),
+                    ),
+                    markerDirection: MarkerDirection.heading,
+                    markerSize: const Size.square(40),
+                    // showAccuracyCircle: false,
+                    // showHeadingSector: false,
+                    accuracyCircleColor: Colors.black,
+                    headingSectorColor: Colors.red,
+                  ),
+                  positionStream: positionStreamController.stream,
+                  headingStream: headingStreamController.stream,
                 ),
               ],
             ),
