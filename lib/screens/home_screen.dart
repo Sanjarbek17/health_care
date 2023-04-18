@@ -41,9 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Spacer(flex: 1),
               IconButton(
-                  icon: index == 0
-                      ? Image.asset(ambulanceActive)
-                      : Image.asset(ambulance),
+                  icon: index == 0 ? Image.asset(ambulanceActive) : Image.asset(ambulance),
                   onPressed: () {
                     setState(() {
                       index = 0;
@@ -51,9 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 2),
               IconButton(
-                  icon: index == 2
-                      ? Image.asset(spravochnikActive)
-                      : Image.asset(spravochnik),
+                  icon: index == 2 ? Image.asset(spravochnikActive) : Image.asset(spravochnik),
                   onPressed: () {
                     setState(() {
                       index = 2;
@@ -61,8 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 4),
               IconButton(
-                  icon:
-                      index == 3 ? Image.asset(infoActive) : Image.asset(info),
+                  icon: index == 3 ? Image.asset(infoActive) : Image.asset(info),
                   onPressed: () {
                     setState(() {
                       index = 3;
@@ -70,9 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 2),
               IconButton(
-                  icon: index == 1
-                      ? Image.asset(profileActive)
-                      : Image.asset(profile),
+                  icon: index == 1 ? Image.asset(profileActive) : Image.asset(profile),
                   onPressed: () {
                     setState(() {
                       index = 1;

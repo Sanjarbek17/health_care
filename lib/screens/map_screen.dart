@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -27,9 +24,7 @@ class MapScreen extends StatelessWidget {
                   Row(children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50)),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(50)),
                       child: const Icon(
                         Icons.phone_rounded,
                         color: Colors.red,
