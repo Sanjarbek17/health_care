@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'constants.dart';
 
@@ -12,6 +16,7 @@ class MapScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
+          // custom app bar
           Container(
             padding: const EdgeInsets.all(10),
             color: Colors.red,
@@ -45,8 +50,21 @@ class MapScreen extends StatelessWidget {
               ),
             ]),
           ),
-          // change to map widget
-          const Center(child: Text('103')),
+          // change to map widget\
+          Expanded(
+            child: FlutterMap(
+              options: MapOptions(
+                center: LatLng(39.6548, 66.9597),
+                zoom: 12.2,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
+                ),
+              ],
+            ),
+          ),
         ]),
       ),
     );
