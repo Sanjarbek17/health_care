@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:health_care/screens/catalog_screen.dart';
-import 'package:health_care/screens/info_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/screens/profil_screen.dart';
-import 'constants.dart';
+
+import '../screens/catalog_screen.dart';
+import '../screens/info_screen.dart';
+import '../screens/map_screen.dart';
+import '../screens/profil_screen.dart';
 
 import '../style/main_style.dart';
+
+import 'constants.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,10 +19,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
   List<Widget> screens = [
-    MapScreen(),
-    ProfilScreen(),
-    CatalogScreen(),
-    InfoScreen(),
+    const MapScreen(),
+    const ProfilScreen(),
+    const CatalogScreen(),
+    const InfoScreen(),
   ];
   @override
   Widget build(BuildContext context) {
