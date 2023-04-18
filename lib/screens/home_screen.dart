@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> screens = [
     const MapScreen(),
     const ProfilScreen(),
-    const CatalogScreen(),
+    CatalogScreen(),
     const InfoScreen(),
   ];
   @override
