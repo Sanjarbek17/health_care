@@ -51,16 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 2),
               IconButton(
-                  icon: index == 1
-                      ? Image.asset(profileActive)
-                      : Image.asset(profile),
-                  onPressed: () {
-                    setState(() {
-                      index = 1;
-                    });
-                  }),
-              const Spacer(flex: 4),
-              IconButton(
                   icon: index == 2
                       ? Image.asset(spravochnikActive)
                       : Image.asset(spravochnik),
@@ -69,13 +59,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       index = 2;
                     });
                   }),
-              const Spacer(flex: 2),
+              const Spacer(flex: 4),
               IconButton(
                   icon:
                       index == 3 ? Image.asset(infoActive) : Image.asset(info),
                   onPressed: () {
                     setState(() {
                       index = 3;
+                    });
+                  }),
+              const Spacer(flex: 2),
+              IconButton(
+                  icon: index == 1
+                      ? Image.asset(profileActive)
+                      : Image.asset(profile),
+                  onPressed: () {
+                    setState(() {
+                      index = 1;
                     });
                   }),
               const Spacer(flex: 1),
