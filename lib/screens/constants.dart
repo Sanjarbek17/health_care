@@ -23,3 +23,5 @@ const String info = 'assets/info_grey.png';
 const String infoActive = 'assets/info_red.png';
 // splash screen image path
 const String splashImage = 'assets/splash_image.jpg';
+// spravochnik backgorund image path
+const String spravochnikBackground = 'assets/spravochnik_background.jpg';
