@@ -153,7 +153,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
               ),
             ]),
           ),
-          // change to map widget\
+          // change to map widget
+          // map widget
           Expanded(
             child: FlutterMap(
               options: MapOptions(
