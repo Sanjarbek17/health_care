@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -16,9 +18,17 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
-  // late final StreamController<LocationMarkerPosition> positionStreamController;
-  // late final StreamController<LocationMarkerHeading> headingStreamController;
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
+  List<LatLng> polylinePoints = [
+    LatLng(39.653971, 66.961304),
+    LatLng(39.653831, 66.960754),
+  ];
+
+  late AnimationController _controller;
+  late Animation<LatLng> _animation;
+
+  late final StreamController<LocationMarkerPosition> positionStreamController;
+  late final StreamController<LocationMarkerHeading> headingStreamController;
 
   late bool navigationMode;
   late int pointerCount;
@@ -34,21 +44,22 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    // positionStreamController = StreamController()
-    //   ..add(
-    //     LocationMarkerPosition(
-    //       latitude: _currentLat,
-    //       longitude: _currentLng,
-    //       accuracy: 0,
-    //     ),
-    //   );
-    // headingStreamController = StreamController()
-    //   ..add(
-    //     LocationMarkerHeading(
-    //       heading: 0,
-    //       accuracy: pi * 0.2,
-    //     ),
-    //   );
+
+    positionStreamController = StreamController()
+      ..add(
+        LocationMarkerPosition(
+          latitude: _currentLat,
+          longitude: _currentLng,
+          accuracy: 0,
+        ),
+      );
+    headingStreamController = StreamController()
+      ..add(
+        LocationMarkerHeading(
+          heading: 0,
+          accuracy: pi * 0.2,
+        ),
+      );
 
     navigationMode = false;
     pointerCount = 0;
@@ -62,12 +73,47 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   void dispose() {
-    // positionStreamController.close();
-    // headingStreamController.close();
-    // super.dispose();
-
     _followCurrentLocationStreamController.close();
+
+    positionStreamController.close();
+    headingStreamController.close();
     super.dispose();
+  }
+
+  void nearestAmbulance() {
+    determinePosition().then((value) {
+      getRoutePoints(LatLng(_currentLat, _currentLng), LatLng(value.latitude, value.longitude)).then((value) {
+        setState(() {
+          polylinePoints = value;
+        });
+        moveCar(value);
+      });
+    });
+  }
+
+  void moveCar(List<LatLng> polylinePoints) {
+    Future.forEach(polylinePoints, (element) async {
+      await Future.delayed(const Duration(seconds: 1)).then((value) {
+        headingStreamController.add(
+          LocationMarkerHeading(
+            heading: (atan2(element.longitude - _currentLng, element.latitude - _currentLat)) % (pi * 2),
+            accuracy: pi * 0.2,
+          ),
+        );
+        _currentLat = element.latitude;
+        _currentLat = _currentLat.clamp(-85, 85);
+        _currentLng = element.longitude;
+        _currentLng = _currentLng.clamp(-180, 180);
+
+        positionStreamController.add(
+          LocationMarkerPosition(
+            latitude: _currentLat,
+            longitude: _currentLng,
+            accuracy: 0,
+          ),
+        );
+      });
+    });
   }
 
   @override
@@ -112,7 +158,7 @@ class _MapScreenState extends State<MapScreen> {
             child: FlutterMap(
               options: MapOptions(
                 center: LatLng(39.6548, 66.9597),
-                zoom: 12.2,
+                zoom: 13,
               ),
               nonRotatedChildren: [
                 Positioned(
@@ -130,6 +176,9 @@ class _MapScreenState extends State<MapScreen> {
                         },
                       );
                       if (navigationMode) {
+                        // this is only test mode
+                        // it is going to be removed
+                        nearestAmbulance();
                         _followCurrentLocationStreamController.add(18);
                         _turnHeadingUpStreamController.add(null);
                       }
@@ -145,21 +194,33 @@ class _MapScreenState extends State<MapScreen> {
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
+                PolylineLayer(
+                  polylineCulling: false,
+                  polylines: [
+                    Polyline(points: polylinePoints, color: Colors.blue, strokeWidth: 4),
+                  ],
+                ),
+                // the ambulance car
                 CurrentLocationLayer(
-                  // style: LocationMarkerStyle(
-                  //   marker: DefaultLocationMarker(
-                  //     // color: Colors.transparent,
-                  //     child: Image.asset(
-                  //       'assets/gps_map_car.png',
-                  //     ),
-                  //   ),
-                  //   markerDirection: MarkerDirection.heading,
-                  //   markerSize: const Size.square(40),
-                  //   // showAccuracyCircle: false,
-                  //   // showHeadingSector: false,
-                  //   accuracyCircleColor: Colors.black,
-                  //   headingSectorColor: Colors.red,
-                  // ),
+                  positionStream: positionStreamController.stream,
+                  headingStream: headingStreamController.stream,
+                  style: LocationMarkerStyle(
+                    marker: DefaultLocationMarker(
+                      // color: Colors.transparent,
+                      child: Image.asset(
+                        'assets/gps_map_car.png',
+                      ),
+                    ),
+                    markerDirection: MarkerDirection.heading,
+                    markerSize: const Size.square(40),
+                    // showAccuracyCircle: false,
+                    // showHeadingSector: false,
+                    accuracyCircleColor: Colors.black,
+                    headingSectorColor: Colors.red,
+                  ),
+                ),
+                // the user marker
+                CurrentLocationLayer(
                   style: const LocationMarkerStyle(
                     marker: DefaultLocationMarker(
                       child: Icon(
@@ -170,11 +231,6 @@ class _MapScreenState extends State<MapScreen> {
                     markerSize: Size(40, 40),
                     markerDirection: MarkerDirection.heading,
                   ),
-                  // positionStream: positionStreamController.stream,
-                  // headingStream: headingStreamController.stream,
-                  // needs to be fixed
-                  // followScreenPoint: const CustomPoint(39.6548, 66.9597),
-                  // followScreenPointOffset: const CustomPoint(39.6548, 66.9597),
                   followCurrentLocationStream: _followCurrentLocationStreamController.stream,
                   turnHeadingUpLocationStream: _turnHeadingUpStreamController.stream,
                   followOnLocationUpdate: _followOnLocationUpdate,

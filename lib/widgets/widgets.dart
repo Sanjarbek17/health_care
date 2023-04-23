@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/animation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 
 Future<Position> determinePosition() async {
   bool serviceEnabled;
@@ -34,4 +38,33 @@ Future<Position> determinePosition() async {
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
+}
+
+class LatLngTween extends Tween<LatLng> {
+  LatLngTween({required LatLng begin, required LatLng end}) : super(begin: begin, end: end);
+
+  @override
+  LatLng lerp(double t) {
+    return LatLng(begin!.latitude, begin!.longitude);
+  }
+}
+
+Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
+  final String apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bbbb913eeda14ab1b42f177bd4cb4e2d&start=${start.longitude},${start.latitude},&end=${end.longitude},${end.latitude}';
+  print(apiUrl);
+
+  final response = await http.get(Uri.parse(apiUrl));
+  if (response.statusCode == 200) {
+    final decodedData = jsonDecode(response.body);
+    // print(decodedData);
+    final geometry = decodedData['features'][0]['geometry']['coordinates'];
+    print(geometry);
+    final routePoints = <LatLng>[];
+    for (final point in geometry) {
+      routePoints.add(LatLng(point[1], point[0]));
+    }
+    return routePoints;
+  } else {
+    throw Exception('Failed to load route data');
+  }
 }
