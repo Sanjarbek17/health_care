@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:health_care/providers/main_provider.dart';
+import 'package:health_care/screens/catalog/articles.dart';
+import 'package:provider/provider.dart';
 
 import './style/main_style.dart';
 
@@ -17,12 +20,20 @@ class MainRoute extends StatefulWidget {
 class _MainRouteState extends State<MainRoute> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: theme,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const HomeScreen(),
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MainProvider(),
+        )
+      ],
+      child: MaterialApp(
+        theme: theme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const HomeScreen(),
+          Articles.routeName: (context) => Articles()
+        },
+      ),
     );
   }
 }
