@@ -11,54 +11,73 @@ class CatalogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final list = Provider.of<MainProvider>(context, listen: false).names;
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text(
-          'Справочник',
-          style: appBarStyle,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text(
+            'Справочник',
+            style: appBarStyle,
+          ),
         ),
-      ),
-      body: ListView(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height / 6,
-            decoration: const BoxDecoration(
-              image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Первая помощь',
-                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    '11 статей',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ],
+        body: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 6,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                    fit: BoxFit.fitWidth,
+                    image: AssetImage(spravochnikBackground)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Первая помощь',
+                      style: TextStyle(
+                          fontSize: 35,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '11 статей',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) => ListTile(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Articles()));
-              },
-              title: Text(
-                list[index],
-                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Articles(
+                        name: list[index],
+                        index: index,
+                      ),
+                    ),
+                  );
+                },
+                title: Text(
+                  list[index],
+                  style: listTilesStyle,
+                ),
+                subtitle: const Text(
+                  '1 статья',
+                  style: listTilesSubtitleStyle,
+                ),
               ),
-              subtitle: const Text('1 статья'),
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: list.length,
             ),
-            separatorBuilder: (context, index) => const Divider(),
-            itemCount: list.length,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
