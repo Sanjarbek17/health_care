@@ -2,6 +2,18 @@
 const String appBarTitle = '103';
 // main screen appbar leading text
 const String appBarLeadingText = 'служба скорой помощи в Самарканде';
+// main button first text
+const String mainButtonFirstText = 'Я здесь б мне нужна помощь';
+// main button subtitle text
+const String mainButtonFirstSubtitleText = 'Ваши координаты отправятся к оператору скорой помощи';
+// main button second text
+const String mainButtonSecondText = 'Вызвать 103 по телефону';
+// main button second subtitle text
+const String mainButtonSecondSubtitleText = 'Удерживайте кнопку 5 секунд ';
+// main button third text
+const String mainButtonThirdText = 'Вызвать 103 по смс';
+// main button third subtitle text
+const String mainButtonThirdSubtitleText = 'Отправьте запрос о помощи по смс';
 
 // 103 image path
 const String image_103 = 'assets/logo1034.png';
