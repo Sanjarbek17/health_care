@@ -6,7 +6,7 @@ import 'package:health_care/style/constant.dart';
 import 'package:provider/provider.dart';
 
 class CatalogScreen extends StatelessWidget {
-  CatalogScreen({super.key});
+  const CatalogScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +24,7 @@ class CatalogScreen extends StatelessWidget {
           Container(
             height: MediaQuery.of(context).size.height / 6,
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fitWidth,
-                  image: AssetImage(spravochnikBackground)),
+              image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
             ),
             child: Center(
               child: Column(
@@ -34,32 +32,26 @@ class CatalogScreen extends StatelessWidget {
                 children: const [
                   Text(
                     'Первая помощь',
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     '11 статей',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
           ),
           ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) => ListTile(
               onTap: () {
-                Navigator.pushNamed(context, Articles.routeName,
-                    arguments: index);
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Articles()));
               },
               title: Text(
                 list[index],
-                style:
-                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
               ),
               subtitle: const Text('1 статья'),
             ),
