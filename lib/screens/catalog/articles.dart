@@ -4,8 +4,8 @@ import '../constants.dart';
 
 class Articles extends StatelessWidget {
   // int index;
-  // Articles({super.key, required this.index});
-  static const routeName = 'articles';
+  Articles({super.key});
+  static const routeName = '/articles';
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +16,7 @@ class Articles extends StatelessWidget {
         Container(
           height: MediaQuery.of(context).size.height / 6,
           decoration: const BoxDecoration(
-            image: DecorationImage(
-                fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
+            image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
           ),
           child: Center(
             child: Column(
@@ -25,15 +24,11 @@ class Articles extends StatelessWidget {
               children: const [
                 Text(
                   'Первая помощь',
-                  style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '11 статей',
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

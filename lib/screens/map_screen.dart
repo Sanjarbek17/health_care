@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -23,9 +22,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     LatLng(39.653971, 66.961304),
     LatLng(39.653831, 66.960754),
   ];
-
-  late AnimationController _controller;
-  late Animation<LatLng> _animation;
 
   late final StreamController<LocationMarkerPosition> positionStreamController;
   late final StreamController<LocationMarkerHeading> headingStreamController;
@@ -208,9 +204,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   style: LocationMarkerStyle(
                     marker: DefaultLocationMarker(
                       // color: Colors.transparent,
-                      child: Image.asset(
-                        'assets/gps_map_car.png',
-                      ),
+                      child: Image.asset('assets/gps_map_car.png'),
                     ),
                     markerDirection: MarkerDirection.heading,
                     markerSize: const Size.square(40),
@@ -223,12 +217,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
-                    marker: DefaultLocationMarker(
-                      child: Icon(
-                        Icons.navigation,
-                        color: Colors.white,
-                      ),
-                    ),
+                    marker: DefaultLocationMarker(child: Icon(Icons.navigation, color: Colors.white)),
                     markerSize: Size(40, 40),
                     markerDirection: MarkerDirection.heading,
                   ),
