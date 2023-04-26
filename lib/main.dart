@@ -21,13 +21,15 @@ class _MainRouteState extends State<MainRoute> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => MainProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => MainProvider()),
+      ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: theme,
         initialRoute: '/',
         routes: {
           '/': (context) => const HomeScreen(),
-          '/asdf': (context) => Articles(),
         },
       ),
     );
