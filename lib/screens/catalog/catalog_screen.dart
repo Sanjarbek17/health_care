@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:health_care/providers/main_provider.dart';
+import 'package:health_care/screens/catalog/articles.dart';
 import 'package:health_care/screens/constants.dart';
 import 'package:health_care/style/constant.dart';
+import 'package:provider/provider.dart';
 
 class CatalogScreen extends StatelessWidget {
   CatalogScreen({super.key});
-  List<String> names = [
-    'Рана',
-    'Кровоточения',
-    'Травмы и переломы',
-    'Первая помощь: ожоги',
-    'Опасные состояния',
-    'Потерия сознания',
-    'Отправления',
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final list = Provider.of<MainProvider>(context, listen: false).names;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,7 +24,9 @@ class CatalogScreen extends StatelessWidget {
           Container(
             height: MediaQuery.of(context).size.height / 6,
             decoration: const BoxDecoration(
-              image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
+              image: DecorationImage(
+                  fit: BoxFit.fitWidth,
+                  image: AssetImage(spravochnikBackground)),
             ),
             child: Center(
               child: Column(
@@ -37,27 +34,37 @@ class CatalogScreen extends StatelessWidget {
                 children: const [
                   Text(
                     'Первая помощь',
-                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 35,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                   Text(
                     '11 статей',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
           ),
           ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) => ListTile(
+              onTap: () {
+                Navigator.pushNamed(context, Articles.routeName,
+                    arguments: index);
+              },
               title: Text(
-                names[index],
-                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+                list[index],
+                style:
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
               ),
               subtitle: const Text('1 статья'),
             ),
             separatorBuilder: (context, index) => const Divider(),
-            itemCount: names.length,
+            itemCount: list.length,
           ),
         ],
       ),
