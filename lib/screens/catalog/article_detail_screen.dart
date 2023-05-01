@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 
 import '../../style/constant.dart';
@@ -10,6 +12,7 @@ class ArticleDetailScreen extends StatelessWidget {
     required this.name,
     required this.indx,
   });
+  static const routeName = 'article-detail';
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class ArticleDetailScreen extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
