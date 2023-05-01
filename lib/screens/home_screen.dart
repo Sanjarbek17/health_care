@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'catalog/catalog_screen.dart';
 import '../screens/info_screen.dart';
@@ -20,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
+  final phoneNumber = Uri.parse('tel:+998940086601');
+  final smsNumber = Uri.parse('sms:103');
   List<Widget> screens = [
     const MapScreen(),
     ProfilScreen(),
@@ -45,9 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Spacer(flex: 1),
               IconButton(
-                  icon: index == 0
-                      ? Image.asset(ambulanceActive)
-                      : Image.asset(ambulance),
+                  icon: index == 0 ? Image.asset(ambulanceActive) : Image.asset(ambulance),
                   onPressed: () {
                     setState(() {
                       index = 0;
@@ -55,9 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 2),
               IconButton(
-                  icon: index == 2
-                      ? Image.asset(spravochnikActive)
-                      : Image.asset(spravochnik),
+                  icon: index == 2 ? Image.asset(spravochnikActive) : Image.asset(spravochnik),
                   onPressed: () {
                     setState(() {
                       index = 2;
@@ -65,8 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 4),
               IconButton(
-                  icon:
-                      index == 3 ? Image.asset(infoActive) : Image.asset(info),
+                  icon: index == 3 ? Image.asset(infoActive) : Image.asset(info),
                   onPressed: () {
                     setState(() {
                       index = 3;
@@ -74,9 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }),
               const Spacer(flex: 2),
               IconButton(
-                  icon: index == 1
-                      ? Image.asset(profileActive)
-                      : Image.asset(profile),
+                  icon: index == 1 ? Image.asset(profileActive) : Image.asset(profile),
                   onPressed: () {
                     setState(() {
                       index = 1;
@@ -119,13 +115,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: Colors.white,
                   leading: Icon(Icons.sms),
                   title: Text(mainButtonThirdText),
-                  subtitle: Text(mainButtonThirdSubtitleText,
-                      style: TextStyle(fontSize: 10)),
+                  subtitle: Text(mainButtonThirdSubtitleText, style: TextStyle(fontSize: 10)),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2)),
-                onTap: () => print('FIRST CHILD'),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                onTap: () async {
+                  if (await canLaunchUrl(smsNumber)) {
+                    await launchUrl(smsNumber);
+                  } else {
+                    throw 'Could not launch $smsNumber';
+                  }
+                },
               ),
               SpeedDialChild(
                 child: const ListTile(
@@ -133,13 +133,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: Colors.white,
                   leading: Icon(Icons.phone_iphone_rounded),
                   title: Text(mainButtonSecondText),
-                  subtitle: Text(mainButtonSecondSubtitleText,
-                      style: TextStyle(fontSize: 10)),
+                  subtitle: Text(
+                    mainButtonSecondSubtitleText,
+                    style: TextStyle(fontSize: 10),
+                  ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2)),
-                onTap: () => print('FIRST CHILD'),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                onTap: () async {
+                  if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
+                    await launchUrl(Uri.parse('tel:+998940086601'));
+                  } else {
+                    throw 'Could not launch ${Uri.parse('tel:+998940086601')}';
+                  }
+                },
               ),
               SpeedDialChild(
                 child: const ListTile(
@@ -147,12 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: Colors.white,
                   leading: Icon(Icons.place_outlined),
                   title: Text(mainButtonFirstText),
-                  subtitle: Text(mainButtonFirstSubtitleText,
-                      style: TextStyle(fontSize: 10)),
+                  subtitle: Text(mainButtonFirstSubtitleText, style: TextStyle(fontSize: 10)),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
                 onTap: () => print('FIRST CHILD'),
               ),
             ],

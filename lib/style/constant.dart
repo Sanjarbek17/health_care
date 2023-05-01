@@ -8,13 +8,13 @@ const appBarStyle = TextStyle(fontSize: 27);
 
 // ListTiles style
 const listTilesStyle = TextStyle(
-  fontWeight: FontWeight.bold,
+  fontWeight: FontWeight.w600,
   fontSize: 19,
 );
 
 // ListTiles subtitle style
 const listTilesSubtitleStyle = TextStyle(
-  fontWeight: FontWeight.bold,
-  fontSize: 19,
+  fontWeight: FontWeight.w500,
+  fontSize: 17,
   color: Colors.grey,
 );
