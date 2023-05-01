@@ -40,9 +40,7 @@ class Articles extends StatelessWidget {
           Container(
             height: MediaQuery.of(context).size.height / 6,
             decoration: const BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fitWidth,
-                  image: AssetImage(spravochnikBackground)),
+              image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
             ),
             child: Center(
               child: Column(
@@ -50,15 +48,11 @@ class Articles extends StatelessWidget {
                 children: [
                   const Text(
                     'Первая помощь',
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                   const Text(
                     '11 статей',
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -78,7 +72,10 @@ class Articles extends StatelessWidget {
                       ),
                     ));
               },
-              title: Text(articles[index]),
+              title: Text(
+                articles[index],
+                style: listTilesStyle,
+              ),
             ),
             separatorBuilder: (context, index) => Divider(),
             itemCount: 1,
