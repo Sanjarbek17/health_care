@@ -158,7 +158,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                onTap: () => print('FIRST CHILD'),
+                onTap: () {
+                  setState(() {
+                    index = 0;
+                  });
+                },
               ),
             ],
           ),

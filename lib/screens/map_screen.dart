@@ -40,7 +40,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
+    // this is only test mode
+    // it is going to be removed
+    print('begin');
+    nearestAmbulance();
     positionStreamController = StreamController()
       ..add(
         LocationMarkerPosition(
@@ -78,9 +81,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   void nearestAmbulance() {
     determinePosition().then((value) {
-      getRoutePoints(LatLng(_currentLat, _currentLng),
-              LatLng(value.latitude, value.longitude))
-          .then((value) {
+      getRoutePoints(LatLng(_currentLat, _currentLng), LatLng(value.latitude, value.longitude)).then((value) {
         setState(() {
           polylinePoints = value;
         });
@@ -94,9 +95,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       await Future.delayed(const Duration(seconds: 1)).then((value) {
         headingStreamController.add(
           LocationMarkerHeading(
-            heading: (atan2(element.longitude - _currentLng,
-                    element.latitude - _currentLat)) %
-                (pi * 2),
+            heading: (atan2(element.longitude - _currentLng, element.latitude - _currentLat)) % (pi * 2),
             accuracy: pi * 0.2,
           ),
         );
@@ -132,9 +131,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   Row(children: [
                     Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50)),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(50)),
                       child: const Icon(
                         Icons.phone_rounded,
                         color: Colors.red,
@@ -174,18 +171,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                       setState(
                         () {
                           navigationMode = !navigationMode;
-                          _followOnLocationUpdate = navigationMode
-                              ? FollowOnLocationUpdate.always
-                              : FollowOnLocationUpdate.never;
-                          _turnOnHeadingUpdate = navigationMode
-                              ? TurnOnHeadingUpdate.always
-                              : TurnOnHeadingUpdate.never;
+                          _followOnLocationUpdate = navigationMode ? FollowOnLocationUpdate.always : FollowOnLocationUpdate.never;
+                          _turnOnHeadingUpdate = navigationMode ? TurnOnHeadingUpdate.always : TurnOnHeadingUpdate.never;
                         },
                       );
                       if (navigationMode) {
-                        // this is only test mode
-                        // it is going to be removed
-                        nearestAmbulance();
                         _followCurrentLocationStreamController.add(18);
                         _turnHeadingUpStreamController.add(null);
                       }
@@ -204,10 +194,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 PolylineLayer(
                   polylineCulling: false,
                   polylines: [
-                    Polyline(
-                        points: polylinePoints,
-                        color: Colors.blue,
-                        strokeWidth: 4),
+                    Polyline(points: polylinePoints, color: Colors.blue, strokeWidth: 4),
                   ],
                 ),
                 // the ambulance car
@@ -230,15 +217,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
-                    marker: DefaultLocationMarker(
-                        child: Icon(Icons.navigation, color: Colors.white)),
+                    marker: DefaultLocationMarker(child: Icon(Icons.navigation, color: Colors.white)),
                     markerSize: Size(40, 40),
                     markerDirection: MarkerDirection.heading,
                   ),
-                  followCurrentLocationStream:
-                      _followCurrentLocationStreamController.stream,
-                  turnHeadingUpLocationStream:
-                      _turnHeadingUpStreamController.stream,
+                  followCurrentLocationStream: _followCurrentLocationStreamController.stream,
+                  turnHeadingUpLocationStream: _turnHeadingUpStreamController.stream,
                   followOnLocationUpdate: _followOnLocationUpdate,
                   turnOnHeadingUpdate: _turnOnHeadingUpdate,
                 ),
