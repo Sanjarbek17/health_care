@@ -47,7 +47,7 @@ class _MainRouteState extends State<MainRoute> {
                       name: Articles.routeName,
                       builder: (context, state) => Articles(
                             name: (state.extra as Map<String, Object>)['name'].toString(),
-                            index: int.parse((state.extra as Map<String, Object>)['id'].toString()),
+                            index: int.parse((state.extra as Map<String, Object>)['index'].toString()),
                           ),
                       routes: [
                         GoRoute(
