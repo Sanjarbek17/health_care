@@ -1,6 +1,7 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables, must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:health_care/providers/main_provider.dart';
 import 'package:health_care/screens/catalog/article_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ class Articles extends StatelessWidget {
   String name;
   int index;
   Articles({super.key, required this.index, required this.name});
-  static const routeName = '/articles';
+  static const routeName = 'articles';
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class Articles extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
@@ -59,25 +60,21 @@ class Articles extends StatelessWidget {
             ),
           ),
           ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, i) => ListTile(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ArticleDetailScreen(
-                        indx: index,
-                        name: name,
-                      ),
-                    ));
+                context.goNamed(ArticleDetailScreen.routeName, extra: {
+                  'index': index,
+                  "name": name,
+                });
               },
               title: Text(
                 articles[index],
                 style: listTilesStyle,
               ),
             ),
-            separatorBuilder: (context, index) => Divider(),
+            separatorBuilder: (context, index) => const Divider(),
             itemCount: 1,
           )
         ],

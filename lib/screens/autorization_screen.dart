@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 class AutorizationScreen extends StatelessWidget {
   const AutorizationScreen({super.key});
@@ -14,17 +12,16 @@ class AutorizationScreen extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.arrow_back_ios_new),
+                  icon: const Icon(Icons.arrow_back_ios_new),
                 ),
-                Text('Авторизация'),
+                const Text('Авторизация'),
               ],
             ),
-            Text(
-                'Введите ноиер телефона, который вы использавали при регистрации в мобильном приложении ”iAmbulance”')
+            const Text('Введите ноиер телефона, который вы использавали при регистрации в мобильном приложении ”iAmbulance”')
           ],
         ),
         floatingActionButton: FilledButton(
-          child: Text('Продолжить'),
+          child: const Text('Продолжить'),
           onPressed: () {},
         ));
   }
