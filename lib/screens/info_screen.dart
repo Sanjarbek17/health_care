@@ -172,7 +172,19 @@ class InfoScreen extends StatelessWidget {
                 ),
                 backgroundColor: Colors.red,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-                onTap: () {},
+                onTap: () {
+                  // get mapprovider
+                  final mapProvider = Provider.of<MapProvider>(context, listen: false);
+                  // change toggle value
+                  if (!mapProvider.isRun) {
+                    mapProvider.addOne();
+                  }
+
+                  context.goNamed(
+                    HomeScreen.routeName,
+                    extra: mapProvider.isRun,
+                  );
+                },
               ),
             ],
           ),

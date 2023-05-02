@@ -10,8 +10,10 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../providers/main_provider.dart';
 import '/screens/catalog/catalog_screen.dart';
 import '/screens/info_screen.dart';
 import '../style/my_flutter_app_icons.dart';
@@ -50,10 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   @override
   void initState() {
     super.initState();
-    // this is only test mode
-    // it is going to be removed
-    print('begin');
-    nearestAmbulance();
+
     positionStreamController = StreamController()
       ..add(
         LocationMarkerPosition(
@@ -89,13 +88,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     super.dispose();
   }
 
-  void nearestAmbulance() {
+  void nearestAmbulance(Function func) {
     determinePosition().then((value) {
       getRoutePoints(LatLng(_currentLat, _currentLng), LatLng(value.latitude, value.longitude)).then((value) {
         setState(() {
           polylinePoints = value;
         });
-        moveCar(value);
+        moveCar(value, func);
       });
     });
   }
@@ -109,16 +108,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
       },
     );
     if (navigationMode) {
-      // this is only test mode
-      // it is going to be removed
-      nearestAmbulance();
       _followCurrentLocationStreamController.add(18);
       _turnHeadingUpStreamController.add(null);
     }
   }
 
-  void moveCar(List<LatLng> polylinePoints) {
-    Future.forEach(polylinePoints, (element) async {
+  void moveCar(List<LatLng> polylinePoints, Function func) async {
+    await Future.forEach(polylinePoints, (element) async {
       await Future.delayed(const Duration(seconds: 1)).then((value) {
         headingStreamController.add(
           LocationMarkerHeading(
@@ -140,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
         );
       });
     });
+    func();
   }
 
   final phoneNumber = Uri.parse('tel:103');
@@ -147,6 +144,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   @override
   Widget build(BuildContext context) {
+    // get mapprovider
+    final mapProvider = Provider.of<MapProvider>(context);
+    if (mapProvider.isRun) {
+      print('car is running');
+      nearestAmbulance(mapProvider.makeItZero);
+      mapProvider.addOne();
+    }
+
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
@@ -358,7 +363,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
               ),
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-              onTap: () {},
+              onTap: () {
+                if (!mapProvider.isRun) {
+                  nearestAmbulance(mapProvider.makeItZero);
+                }
+              },
             ),
           ],
         ),
