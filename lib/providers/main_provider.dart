@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MainProvider with ChangeNotifier {
   List<String> names = [
@@ -57,4 +58,27 @@ class MainProvider with ChangeNotifier {
     'Ферганская область',
     'Хорезмская область',
   ];
+}
+
+class MapProvider with ChangeNotifier {
+  // create a private variable to store the value of the isRun
+  bool _isRun = false;
+  int number = -1;
+
+  // create a getter to return the value of the isRun
+  bool get isRun => _isRun;
+
+  // create a setter to set the value of the isRun
+  void addOne() {
+    number++;
+    _isRun = number == 0;
+    if (isRun) {
+      notifyListeners();
+    }
+  }
+
+  void makeItZero() {
+    number = 0;
+    _isRun = number == 0;
+  }
 }

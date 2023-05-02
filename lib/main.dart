@@ -27,6 +27,7 @@ class _MainRouteState extends State<MainRoute> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider()),
+        ChangeNotifierProvider(create: (context) => MapProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
