@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class MainProvider with ChangeNotifier {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController surnameController = TextEditingController();
+  TextEditingController birthController = TextEditingController();
+  TextEditingController numberController = TextEditingController();
   List<String> names = [
     'Рана',
     'Кровоточения',
@@ -58,6 +62,7 @@ class MainProvider with ChangeNotifier {
     'Ферганская область',
     'Хорезмская область',
   ];
+  String? selectedValue;
 }
 
 class MapProvider with ChangeNotifier {

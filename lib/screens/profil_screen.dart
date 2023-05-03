@@ -32,7 +32,7 @@ class ProfilScreen extends StatefulWidget {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   bool _switched = false;
-  String? selectedValue;
+
   final phoneNumber = Uri.parse('tel:103');
   final smsNumber = Uri.parse('sms:103');
 
@@ -174,6 +174,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
+              controller: Provider.of<MainProvider>(context, listen: false).nameController,
               decoration: InputDecoration(
                 labelText: 'Имя',
               ),
@@ -182,6 +183,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
+              controller: Provider.of<MainProvider>(context, listen: false).surnameController,
               decoration: InputDecoration(
                 labelText: 'Отчество',
               ),
@@ -190,6 +192,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
+              controller: Provider.of<MainProvider>(context, listen: false).birthController,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Год рождения',
               ),
@@ -198,6 +202,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
+              controller: Provider.of<MainProvider>(context, listen: false).numberController,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Номер телефона',
               ),
@@ -251,10 +257,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
                     ),
                   )
                   .toList(),
-              value: selectedValue,
+              value: Provider.of<MainProvider>(context, listen: false).selectedValue,
               onChanged: (value) {
                 setState(() {
-                  selectedValue = value as String;
+                  Provider.of<MainProvider>(context, listen: false).selectedValue = value as String;
                 });
               },
               buttonStyleData: const ButtonStyleData(
