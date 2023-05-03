@@ -1,13 +1,21 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print
 
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:image_picker_android/image_picker_android.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:path/path.dart';
 
 import '../providers/main_provider.dart';
 import '../style/my_flutter_app_icons.dart';
@@ -28,8 +36,39 @@ class _ProfilScreenState extends State<ProfilScreen> {
   final phoneNumber = Uri.parse('tel:103');
   final smsNumber = Uri.parse('sms:103');
 
+  File? _image;
+  Future getImage(ImageSource sourse) async {
+    try {
+      final image = await ImagePicker().pickImage(source: sourse);
+
+      if (image != null) return;
+
+      // final imageTemporary = File(imageGallery!.path);
+      final imagePermanently = await saveFilePermanently(image!.path);
+
+      setState(() {
+        _image = imagePermanently;
+      });
+    } on PlatformException catch (e) {
+      print('Failed to pick image $e');
+    }
+  }
+
+  Future<File> saveFilePermanently(String imagePath) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final name = basename(imagePath);
+    final image = File('${directory.path}/$name');
+
+    return File(imagePath).copy(image.path);
+  }
+
   @override
   Widget build(BuildContext context) {
+    // ···
+    final ImagePickerPlatform imagePickerImplementation = ImagePickerPlatform.instance;
+    if (imagePickerImplementation is ImagePickerAndroid) {
+      imagePickerImplementation.useAndroidPhotoPicker = true;
+    }
     final items = Provider.of<MainProvider>(context).regions;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -50,14 +89,31 @@ class _ProfilScreenState extends State<ProfilScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: CircleAvatar(
-                  backgroundColor: Color(0xFFAFB1A0),
-                  radius: 35,
-                  child: Icon(
-                    Icons.camera_alt,
-                    size: 30,
-                    color: Colors.white,
-                  ),
+                child: InkWell(
+                  onTap: () => getImage(ImageSource.gallery),
+                  child: _image != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Color(0xFFAFB1A0),
+                          ),
+                          width: 70,
+                          height: 70,
+                          child: Image.file(_image!),
+                        )
+                      : CircleAvatar(
+                          radius: 35,
+                          backgroundColor: Color(0xFFAFB1A0),
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                          ),
+                        ),
+                  // CircleAvatar(
+                  //   backgroundImage: ,
+                  //   backgroundColor: Color(0xFFAFB1A0),
+                  //   radius: 35,
+                  // ),
                 ),
               ),
             ],
