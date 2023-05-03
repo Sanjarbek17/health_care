@@ -4,7 +4,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/animation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<Position> determinePosition() async {
   bool serviceEnabled;
@@ -40,6 +42,24 @@ Future<Position> determinePosition() async {
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition();
+}
+
+Future statusPermission() async {
+  // Test if location services are enabled.
+  var status = await Permission.storage.status;
+
+  if (status == Permission.storage.isDenied) {
+    // Permissions are denied, next time you could try
+    // requesting permissions again (this is also where
+    // Android's shouldShowRequestPermissionRationale
+    // returned true. According to Android guidelines
+    // your App should show an explanatory UI now.
+    return Future.error('Location permissions are denied');
+  }
+  Permission.storage.request();
+  // When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  return status;
 }
 
 class LatLngTween extends Tween<LatLng> {

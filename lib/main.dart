@@ -56,7 +56,7 @@ class _MainRouteState extends State<MainRoute> {
                           name: ArticleDetailScreen.routeName,
                           builder: (context, state) => ArticleDetailScreen(
                             name: (state.extra as Map<String, Object>)['name'].toString(),
-                            indx: int.parse((state.extra as Map<String, Object>)['id'].toString()),
+                            indx: int.parse((state.extra as Map<String, Object>)['index'].toString()),
                           ),
                         ),
                       ])
