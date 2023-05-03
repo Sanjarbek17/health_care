@@ -41,9 +41,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
   Future<bool> _getImage(ImageSource source) async {
     bool isPicked = false;
     Map<Permission, PermissionStatus> status = await [
-      Permission.photos,
+      Permission.storage,
     ].request();
-    if (!status[Permission.photos]!.isDenied) {
+    if (!status[Permission.storage]!.isDenied) {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(source: source);
 
@@ -59,7 +59,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         });
       }
     } else {
-      Permission.photos.request();
+      Permission.storage.request();
     }
     return isPicked;
   }

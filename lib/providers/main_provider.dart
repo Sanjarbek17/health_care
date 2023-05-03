@@ -78,7 +78,7 @@ class MapProvider with ChangeNotifier {
   }
 
   void makeItZero() {
-    number = 0;
+    number = -1;
     _isRun = number == 0;
   }
 }
