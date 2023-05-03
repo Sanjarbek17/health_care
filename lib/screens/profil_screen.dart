@@ -4,19 +4,19 @@ import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
+import 'package:health_care/style/constant.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:path/path.dart';
-
 import '../providers/main_provider.dart';
 import '../style/my_flutter_app_icons.dart';
 import 'constants.dart';
@@ -37,29 +37,31 @@ class _ProfilScreenState extends State<ProfilScreen> {
   final smsNumber = Uri.parse('sms:103');
 
   File? _image;
-  Future getImage(ImageSource sourse) async {
-    try {
-      final image = await ImagePicker().pickImage(source: sourse);
 
-      if (image != null) return;
+  Future<bool> _getImage(ImageSource source) async {
+    bool isPicked = false;
+    Map<Permission, PermissionStatus> status = await [
+      Permission.photos,
+    ].request();
+    if (!status[Permission.photos]!.isDenied) {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: source);
 
-      // final imageTemporary = File(imageGallery!.path);
-      final imagePermanently = await saveFilePermanently(image!.path);
+      if (pickedFile != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final name = basename(pickedFile.path);
+        final image = File('${directory.path}/$name');
+        final savedFile = await image.writeAsBytes(await pickedFile.readAsBytes());
 
-      setState(() {
-        _image = imagePermanently;
-      });
-    } on PlatformException catch (e) {
-      print('Failed to pick image $e');
+        setState(() {
+          _image = savedFile;
+          isPicked = true;
+        });
+      }
+    } else {
+      Permission.photos.request();
     }
-  }
-
-  Future<File> saveFilePermanently(String imagePath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final name = basename(imagePath);
-    final image = File('${directory.path}/$name');
-
-    return File(imagePath).copy(image.path);
+    return isPicked;
   }
 
   @override
@@ -90,16 +92,67 @@ class _ProfilScreenState extends State<ProfilScreen> {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: InkWell(
-                  onTap: () => getImage(ImageSource.gallery),
-                  child: _image != null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: Color(0xFFAFB1A0),
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Column(
+                            children: [
+                              TextButton(
+                                onPressed: () {
+                                  _getImage(ImageSource.camera).then((value) => value ? Navigator.of(context).pop() : null);
+                                },
+                                child: Text(
+                                  'Take photo',
+                                  style: dialogStyle,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _getImage(ImageSource.gallery).then((value) => value ? Navigator.of(context).pop() : null);
+                                },
+                                child: Text(
+                                  'Choose from library',
+                                  style: dialogStyle,
+                                ),
+                              ),
+                              _image != null
+                                  ? TextButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _image = null;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        'Remove photo',
+                                        style: dialogStyle,
+                                      ),
+                                    )
+                                  : TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text(
+                                        'Cencel',
+                                        style: dialogStyle,
+                                      ),
+                                    ),
+                            ],
                           ),
-                          width: 70,
-                          height: 70,
-                          child: Image.file(_image!),
+                        );
+                      },
+                    );
+                  },
+                  child: _image != null
+                      ? CircleAvatar(
+                          radius: 35,
+                          backgroundImage: FileImage(_image!),
+                          // child: Image.file(_image!),
                         )
                       : CircleAvatar(
                           radius: 35,

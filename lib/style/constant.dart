@@ -18,3 +18,10 @@ const listTilesSubtitleStyle = TextStyle(
   fontSize: 17,
   color: Colors.grey,
 );
+
+// Dialog style
+const dialogStyle = TextStyle(
+  fontWeight: FontWeight.w500,
+  // fontSize: 14,
+  color: Colors.black,
+);

@@ -77,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     _followCurrentLocationStreamController = StreamController<double?>();
     _turnHeadingUpStreamController = StreamController<void>();
     determinePosition();
+    statusPermission();
   }
 
   @override
