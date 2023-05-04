@@ -30,10 +30,7 @@ class HomeScreen extends StatefulWidget with ChangeNotifier {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, ChangeNotifier {
-  List<LatLng> polylinePoints = [
-    LatLng(39.653971, 66.961304),
-    LatLng(39.653831, 66.960754),
-  ];
+  List<LatLng> polylinePoints = [];
 
   late final StreamController<LocationMarkerPosition> positionStreamController;
   late final StreamController<LocationMarkerHeading> headingStreamController;

@@ -262,7 +262,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
         child: SpeedDial(
           icon: MyFlutterApp.logo1034,
           activeIcon: Icons.close,
-          iconTheme: IconThemeData(color: Colors.red),
+          iconTheme: const IconThemeData(color: Colors.red, size: 56),
           visible: true,
           closeManually: false,
           childrenButtonSize: Size(width * 0.9, 70),
