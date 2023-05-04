@@ -7,12 +7,13 @@ import 'package:health_care/screens/map_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../providers/main_provider.dart';
-import '../style/constant.dart';
-import '../style/my_flutter_app_icons.dart';
-import 'catalog/catalog_screen.dart';
-import 'constants.dart';
-import 'profile/profil_screen.dart';
+import '../../providers/main_provider.dart';
+import '../../style/constant.dart';
+import '../../style/my_flutter_app_icons.dart';
+import '../catalog/catalog_screen.dart';
+import '../constants.dart';
+import '../profile/profil_screen.dart';
+import 'info_detail.dart';
 
 class InfoScreen extends StatelessWidget {
   InfoScreen({super.key});
@@ -44,10 +45,14 @@ class InfoScreen extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
             ),
+            const Divider(),
             ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  context.goNamed(InfoDetail.routeName);
+                },
                 title: Text(
                   list[index],
                   style: listTilesStyle,

@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class MainProvider with ChangeNotifier {
   TextEditingController nameController = TextEditingController();
   TextEditingController surnameController = TextEditingController();
   TextEditingController birthController = TextEditingController();
   TextEditingController numberController = TextEditingController();
+  File? imageFile;
   List<String> names = [
     'Рана',
     'Кровоточения',
@@ -31,22 +33,39 @@ class MainProvider with ChangeNotifier {
     'Телефоны медицинских учреждений в районах',
   ];
 
-  List<String> shaharTezYordam = [
-    "Kattaqo'rg'on ShTB (0366)-455-21-36",
-    "Pastdarg'om TTB (0366)-465-12-99",
-    "Ishtixon TTB (0366)-629-11-03",
-    "JomboyTTB (0366)-475-11-90",
-    "Bulung'ur TTB (0366)-442-24-58",
-    "Nurobod TTB (0366)-240-22-03",
-    "Payariq TTB (0366)-425-12-99",
-    "Urgut TTB (0366)-483-43-54",
-    "Qo'shrabod TTB (0366)-646-15-99",
-    "Narpay TTB (0366)-220-63-02",
-    "Oqdaryo TTB (0366)-492-58-12",
-    "Kattaqo'rg'on TTB (0366)-414-12-99",
-    "Paxtachi TTB (0366)-403-12-99",
-    "Samarqand TTB (0366)-616-23-03",
-    "Tayloq TTB (0366)-666-57-03",
+  List<String> tumanlar = [
+    "Kattaqo'rg'on ShTB",
+    "Pastdarg'om TTB",
+    "Ishtixon TTB",
+    "JomboyTTB",
+    "Bulung'ur TTB",
+    "Nurobod TTB",
+    "Payariq TTB",
+    "Urgut TTB",
+    "Qo'shrabod TTB",
+    "Narpay TTB",
+    "Oqdaryo TTB",
+    "Kattaqo'rg'on TTB",
+    "Paxtachi TTB",
+    "Samarqand TTB ",
+    "Tayloq TTB",
+  ];
+  List<String> raqamlar = [
+    "(0366)-455-21-36",
+    "(0366)-465-12-99",
+    "(0366)-629-11-03",
+    "(0366)-475-11-90",
+    "(0366)-442-24-58",
+    "(0366)-240-22-03",
+    "(0366)-425-12-99",
+    "(0366)-483-43-54",
+    "(0366)-646-15-99",
+    "(0366)-220-63-02",
+    "(0366)-492-58-12",
+    "(0366)-414-12-99",
+    "(0366)-403-12-99",
+    "(0366)-616-23-03",
+    "(0366)-666-57-03",
   ];
   List<String> regions = [
     'Андижанская область',

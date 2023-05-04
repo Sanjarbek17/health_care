@@ -1,30 +1,25 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_print, must_be_immutable
 
 import 'dart:io';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
 import 'package:health_care/screens/profile/editing_profile.dart';
-import 'package:health_care/style/constant.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
-import 'package:path/path.dart';
 import '../../providers/main_provider.dart';
 import '../../style/my_flutter_app_icons.dart';
 import '../constants.dart';
-import '../info_screen.dart';
+import '../info/info_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
-  const ProfilScreen({super.key});
+  File? image;
+  ProfilScreen({super.key, this.image});
   static const routeName = 'profile';
 
   @override
@@ -32,38 +27,8 @@ class ProfilScreen extends StatefulWidget {
 }
 
 class _ProfilScreenState extends State<ProfilScreen> {
-  bool _switched = false;
-
   final phoneNumber = Uri.parse('tel:103');
   final smsNumber = Uri.parse('sms:103');
-
-  File? _image;
-
-  Future<bool> _getImage(ImageSource source) async {
-    bool isPicked = false;
-    Map<Permission, PermissionStatus> status = await [
-      Permission.storage,
-    ].request();
-    if (!status[Permission.storage]!.isDenied) {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: source);
-
-      if (pickedFile != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final name = basename(pickedFile.path);
-        final image = File('${directory.path}/$name');
-        final savedFile = await image.writeAsBytes(await pickedFile.readAsBytes());
-
-        setState(() {
-          _image = savedFile;
-          isPicked = true;
-        });
-      }
-    } else {
-      Permission.storage.request();
-    }
-    return isPicked;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +41,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
     if (imagePickerImplementation is ImagePickerAndroid) {
       imagePickerImplementation.useAndroidPhotoPicker = true;
     }
-    final items = Provider.of<MainProvider>(context).regions;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -101,80 +65,20 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: InkWell(
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Column(
-                                children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      _getImage(ImageSource.camera).then((value) => value ? Navigator.of(context).pop() : null);
-                                    },
-                                    child: Text(
-                                      'Take photo',
-                                      style: dialogStyle,
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      _getImage(ImageSource.gallery).then((value) => value ? Navigator.of(context).pop() : null);
-                                    },
-                                    child: Text(
-                                      'Choose from library',
-                                      style: dialogStyle,
-                                    ),
-                                  ),
-                                  _image != null
-                                      ? TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              _image = null;
-                                            });
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            'Remove photo',
-                                            style: dialogStyle,
-                                          ),
-                                        )
-                                      : TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text(
-                                            'Cencel',
-                                            style: dialogStyle,
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: _image != null
-                          ? CircleAvatar(
-                              radius: 40,
-                              backgroundImage: FileImage(_image!),
-                              // child: Image.file(_image!),
-                            )
-                          : CircleAvatar(
-                              radius: 40,
-                              backgroundColor: Colors.grey[400],
-                              child: Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                              ),
+                    child: widget.image != null
+                        ? CircleAvatar(
+                            radius: 40,
+                            backgroundImage: FileImage(widget.image!),
+                            // child: Image.file(_image!),
+                          )
+                        : CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.grey[400],
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
                             ),
-                      // CircleAvatar(
-                      //   backgroundImage: ,
-                      //   backgroundColor: Color(0xFFAFB1A0),
-                      //   radius: 35,
-                      // ),
-                    ),
+                          ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -306,7 +210,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 ),
               ),
               onPressed: () {
-                context.goNamed(EditingProfile.routeName);
+                context.goNamed(EditingProfile.routeName, extra: widget.image);
               },
               child: Text('Изменить профиль'),
             ),
