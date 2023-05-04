@@ -15,11 +15,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/main_provider.dart';
 import '/screens/catalog/catalog_screen.dart';
-import '/screens/info_screen.dart';
+import 'info/info_screen.dart';
 import '../style/my_flutter_app_icons.dart';
 import '../widgets/widgets.dart';
 import 'constants.dart';
-import 'profil_screen.dart';
+import 'profile/profil_screen.dart';
 
 class HomeScreen extends StatefulWidget with ChangeNotifier {
   HomeScreen({super.key});

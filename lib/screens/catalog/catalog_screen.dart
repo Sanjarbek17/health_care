@@ -6,14 +6,14 @@ import 'package:go_router/go_router.dart';
 import 'package:health_care/providers/main_provider.dart';
 import 'package:health_care/screens/catalog/articles.dart';
 import 'package:health_care/screens/constants.dart';
-import 'package:health_care/screens/info_screen.dart';
+import 'package:health_care/screens/info/info_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
 import 'package:health_care/style/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../style/my_flutter_app_icons.dart';
-import '../profil_screen.dart';
+import '../profile/profil_screen.dart';
 
 class CatalogScreen extends StatelessWidget {
   CatalogScreen({super.key});
@@ -27,6 +27,7 @@ class CatalogScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          // toolbarHeight: ,
           centerTitle: true,
           title: const Text(
             'Справочник',
