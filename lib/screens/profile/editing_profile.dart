@@ -1,9 +1,11 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:go_router/go_router.dart';
+import 'package:health_care/screens/profile/profil_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
@@ -16,7 +18,8 @@ import '../../providers/main_provider.dart';
 import '../../style/constant.dart';
 
 class EditingProfile extends StatefulWidget {
-  const EditingProfile({super.key});
+  File? image;
+  EditingProfile({super.key, this.image});
   static const routeName = 'edit';
 
   @override
@@ -78,7 +81,7 @@ class _EditingProfileState extends State<EditingProfile> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
@@ -108,7 +111,7 @@ class _EditingProfileState extends State<EditingProfile> {
                                 onPressed: () {
                                   _getImage(ImageSource.camera).then((value) => value ? Navigator.of(context).pop() : null);
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Take photo',
                                   style: dialogStyle,
                                 ),
@@ -117,20 +120,24 @@ class _EditingProfileState extends State<EditingProfile> {
                                 onPressed: () {
                                   _getImage(ImageSource.gallery).then((value) => value ? Navigator.of(context).pop() : null);
                                 },
-                                child: Text(
+                                child: const Text(
                                   'Choose from library',
                                   style: dialogStyle,
                                 ),
                               ),
-                              _image != null
+                              _image != null || widget.image != null
                                   ? TextButton(
                                       onPressed: () {
                                         setState(() {
-                                          _image = null;
+                                          if (widget.image != null) {
+                                            widget.image = null;
+                                          } else {
+                                            _image = null;
+                                          }
                                         });
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         'Remove photo',
                                         style: dialogStyle,
                                       ),
@@ -139,7 +146,7 @@ class _EditingProfileState extends State<EditingProfile> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text(
+                                      child: const Text(
                                         'Cencel',
                                         style: dialogStyle,
                                       ),
@@ -156,14 +163,20 @@ class _EditingProfileState extends State<EditingProfile> {
                           backgroundImage: FileImage(_image!),
                           // child: Image.file(_image!),
                         )
-                      : CircleAvatar(
-                          radius: 35,
-                          backgroundColor: Color(0xFFAFB1A0),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                          ),
-                        ),
+                      : widget.image != null
+                          ? CircleAvatar(
+                              radius: 35,
+                              backgroundImage: FileImage(widget.image!),
+                              // child: Image.file(_image!),
+                            )
+                          : const CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Color(0xFFAFB1A0),
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                              ),
+                            ),
                   // CircleAvatar(
                   //   backgroundImage: ,
                   //   backgroundColor: Color(0xFFAFB1A0),
@@ -177,7 +190,7 @@ class _EditingProfileState extends State<EditingProfile> {
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Имя',
               ),
             ),
@@ -186,7 +199,7 @@ class _EditingProfileState extends State<EditingProfile> {
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).surnameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Отчество',
               ),
             ),
@@ -196,7 +209,7 @@ class _EditingProfileState extends State<EditingProfile> {
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).birthController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Год рождения',
               ),
             ),
@@ -206,7 +219,7 @@ class _EditingProfileState extends State<EditingProfile> {
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).numberController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Номер телефона',
               ),
             ),
@@ -289,22 +302,9 @@ class _EditingProfileState extends State<EditingProfile> {
                 ),
               ),
               onPressed: () {
-                final snackBar = SnackBar(
-                  content: const Text('User info saved successfully!'),
-                  action: SnackBarAction(
-                    label: 'Ok',
-                    onPressed: () {
-                      // Some code to undo the change.
-                    },
-                  ),
-                );
-
-                // Find the ScaffoldMessenger in the widget tree
-                // and use it to show a SnackBar.
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                context.goNamed(ProfilScreen.routeName, extra: _image);
               },
-              child: Text('Сохранить изменения'),
+              child: const Text('Сохранить изменения'),
             ),
           ),
         ],
