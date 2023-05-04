@@ -12,7 +12,7 @@ import '../style/constant.dart';
 import '../style/my_flutter_app_icons.dart';
 import 'catalog/catalog_screen.dart';
 import 'constants.dart';
-import 'profil_screen.dart';
+import 'profile/profil_screen.dart';
 
 class InfoScreen extends StatelessWidget {
   InfoScreen({super.key});

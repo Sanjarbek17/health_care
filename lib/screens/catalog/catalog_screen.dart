@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../style/my_flutter_app_icons.dart';
-import '../profil_screen.dart';
+import '../profile/profil_screen.dart';
 
 class CatalogScreen extends StatelessWidget {
   CatalogScreen({super.key});
