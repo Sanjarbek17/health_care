@@ -19,7 +19,7 @@ import '/screens/info_screen.dart';
 import '../style/my_flutter_app_icons.dart';
 import '../widgets/widgets.dart';
 import 'constants.dart';
-import 'profil_screen.dart';
+import 'profile/profil_screen.dart';
 
 class HomeScreen extends StatefulWidget with ChangeNotifier {
   HomeScreen({super.key});

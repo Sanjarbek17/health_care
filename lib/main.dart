@@ -6,7 +6,8 @@ import 'package:health_care/screens/catalog/articles.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
 import 'package:health_care/screens/info_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/screens/profil_screen.dart';
+import 'package:health_care/screens/profile/editing_profile.dart';
+import 'package:health_care/screens/profile/profil_screen.dart';
 import 'package:provider/provider.dart';
 
 import './style/main_style.dart';
@@ -71,6 +72,13 @@ class _MainRouteState extends State<MainRoute> {
                 path: 'profile',
                 name: ProfilScreen.routeName,
                 builder: (context, state) => const ProfilScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'editing',
+                    name: EditingProfile.routeName,
+                    builder: (context, state) => EditingProfile(),
+                  ),
+                ],
               ),
             ],
           )
