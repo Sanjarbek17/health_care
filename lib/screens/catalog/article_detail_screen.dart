@@ -1,6 +1,8 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:health_care/screens/catalog/constant_infos.dart';
+import 'package:provider/provider.dart';
 
 import '../../style/constant.dart';
 
@@ -16,6 +18,7 @@ class ArticleDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final detailList = Provider.of<InfoProvider>(context, listen: false).aricleInfos;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -32,6 +35,20 @@ class ArticleDetailScreen extends StatelessWidget {
           name,
           style: appBarStyle,
         ),
+      ),
+      body: ListView(
+        children: [
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10),
+            child: Text(name, style: const TextStyle(fontSize: 30)),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(detailList[indx]),
+          ),
+        ],
       ),
     );
   }
