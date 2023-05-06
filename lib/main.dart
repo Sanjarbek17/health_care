@@ -6,6 +6,7 @@ import 'package:health_care/providers/main_provider.dart';
 import 'package:health_care/screens/catalog/article_detail_screen.dart';
 import 'package:health_care/screens/catalog/articles.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
+import 'package:health_care/screens/catalog/constant_infos.dart';
 import 'package:health_care/screens/info/info_screen.dart';
 import 'package:health_care/screens/map_screen.dart';
 import 'package:health_care/screens/profile/editing_profile.dart';
@@ -32,6 +33,7 @@ class _MainRouteState extends State<MainRoute> {
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider()),
         ChangeNotifierProvider(create: (context) => MapProvider()),
+        ChangeNotifierProvider(create: (context) => InfoProvider()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -74,7 +76,7 @@ class _MainRouteState extends State<MainRoute> {
                   GoRoute(
                     path: 'info-detail',
                     name: InfoDetail.routeName,
-                    builder: (context, state) => InfoDetail(),
+                    builder: (context, state) => const InfoDetail(),
                   ),
                 ],
               ),
