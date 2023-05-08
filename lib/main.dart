@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:health_care/providers/main_provider.dart';
+import 'package:health_care/providers/translation_provider.dart';
 import 'package:health_care/screens/catalog/article_detail_screen.dart';
 import 'package:health_care/screens/catalog/articles.dart';
 import 'package:health_care/screens/catalog/catalog_screen.dart';
@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import './style/main_style.dart';
 import 'screens/info/info_detail.dart';
 
-void main() {
+void main() async {
   runApp(const MainRoute());
 }
 
@@ -32,8 +32,14 @@ class _MainRouteState extends State<MainRoute> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider()),
+        ChangeNotifierProvider(create: (context) => MainProviderUz()),
         ChangeNotifierProvider(create: (context) => MapProvider()),
         ChangeNotifierProvider(create: (context) => InfoProvider()),
+        ChangeNotifierProvider(create: (context) => InfoProviderUz()),
+        ChangeNotifierProvider(create: (context) => Translate()),
+        ChangeNotifierProvider(
+          create: (context) => ProfilScreen(),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

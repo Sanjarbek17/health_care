@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/main_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 
 class InfoDetail extends StatelessWidget {
@@ -14,7 +15,11 @@ class InfoDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     final tuman = Provider.of<MainProvider>(context).tumanlar;
+    final tumanUz = Provider.of<MainProviderUz>(context).tumanlar;
     final numbers = Provider.of<MainProvider>(context).raqamlar;
+    final numbersUz = Provider.of<MainProviderUz>(context).raqamlar;
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -28,8 +33,8 @@ class InfoDetail extends StatelessWidget {
             },
           ),
           centerTitle: true,
-          title: const Text(
-            'Самаркандские районы',
+          title: Text(
+            language.isRussian ? 'Самаркандские районы' : 'Samarqand viloyati',
             style: appBarStyle,
           ),
         ),
@@ -49,16 +54,16 @@ class InfoDetail extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) => ListTile(
                 title: Text(
-                  tuman[index],
+                  language.isRussian ? tuman[index] : tumanUz[index],
                   style: listTilesStyle,
                 ),
                 subtitle: Text(
-                  numbers[index],
+                  language.isRussian ? numbers[index] : numbersUz[index],
                   style: listTilesSubtitleStyle,
                 ),
               ),
               separatorBuilder: (context, index) => const Divider(),
-              itemCount: tuman.length,
+              itemCount: language.isRussian ? tuman.length : tumanUz.length,
             )
           ],
         ),
