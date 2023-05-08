@@ -1,17 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/providers/translation_provider.dart';
-import 'package:health_care/screens/catalog/article_detail_screen.dart';
-import 'package:health_care/screens/catalog/articles.dart';
-import 'package:health_care/screens/catalog/catalog_screen.dart';
-import 'package:health_care/screens/catalog/constant_infos.dart';
-import 'package:health_care/screens/info/info_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/screens/profile/editing_profile.dart';
-import 'package:health_care/screens/profile/profil_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+
+import '/providers/main_provider.dart';
+import '/providers/translation_provider.dart';
+import '/screens/catalog/article_detail_screen.dart';
+import '/screens/catalog/articles.dart';
+import '/screens/catalog/catalog_screen.dart';
+import '/screens/catalog/constant_infos.dart';
+import '/screens/info/info_screen.dart';
+import '/screens/map_screen.dart';
+import '/screens/profile/editing_profile.dart';
+import '/screens/profile/profil_screen.dart';
 
 import './style/main_style.dart';
 import 'screens/info/info_detail.dart';

@@ -1,9 +1,9 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:health_care/screens/catalog/constant_infos.dart';
 import 'package:provider/provider.dart';
 
+import '/screens/catalog/constant_infos.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 

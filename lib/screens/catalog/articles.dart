@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/screens/catalog/article_detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '/providers/main_provider.dart';
+import '/screens/catalog/article_detail_screen.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 import '../constants.dart';
