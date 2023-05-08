@@ -3,16 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/screens/catalog/articles.dart';
-import 'package:health_care/screens/catalog/constant_infos.dart';
-import 'package:health_care/screens/constants.dart';
-import 'package:health_care/screens/info/info_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/style/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '/providers/main_provider.dart';
+import '/screens/catalog/articles.dart';
+import '/screens/catalog/constant_infos.dart';
+import '/screens/constants.dart';
+import '/screens/info/info_screen.dart';
+import '/screens/map_screen.dart';
+import '/style/constant.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/my_flutter_app_icons.dart';
 import '../profile/profil_screen.dart';

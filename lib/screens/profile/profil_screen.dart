@@ -5,13 +5,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/screens/catalog/catalog_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/screens/profile/editing_profile.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+
+import '/screens/catalog/catalog_screen.dart';
+import '/screens/map_screen.dart';
+import '/screens/profile/editing_profile.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/my_flutter_app_icons.dart';
