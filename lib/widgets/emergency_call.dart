@@ -10,10 +10,10 @@ class EmergencyCall extends StatelessWidget {
         ExpansionPanelRadio(
           value: 1,
           headerBuilder: (context, isExpanded) => Container(
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             color: Colors.red,
           ),
-          body: ExpansionTile(
+          body: const ExpansionTile(
             title: Text('nimadir'),
           ),
         )

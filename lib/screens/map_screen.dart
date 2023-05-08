@@ -1,31 +1,37 @@
+// ignore_for_file: must_be_immutable, avoid_print
+
 import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../providers/main_provider.dart';
+import '../providers/translation_provider.dart';
+import '/screens/catalog/catalog_screen.dart';
+import 'info/info_screen.dart';
+import '../style/my_flutter_app_icons.dart';
 import '../widgets/widgets.dart';
 import 'constants.dart';
+import 'profile/profil_screen.dart';
 
-class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+class HomeScreen extends StatefulWidget with ChangeNotifier {
+  HomeScreen({super.key});
+  static const routeName = 'home-screen';
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-  List<LatLng> polylinePoints = [
-    LatLng(39.653971, 66.961304),
-    LatLng(39.653831, 66.960754),
-  ];
-
-  late AnimationController _controller;
-  late Animation<LatLng> _animation;
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, ChangeNotifier {
+  List<LatLng> polylinePoints = [];
 
   late final StreamController<LocationMarkerPosition> positionStreamController;
   late final StreamController<LocationMarkerHeading> headingStreamController;
@@ -69,6 +75,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _followCurrentLocationStreamController = StreamController<double?>();
     _turnHeadingUpStreamController = StreamController<void>();
     determinePosition();
+    statusPermission();
   }
 
   @override
@@ -80,19 +87,33 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void nearestAmbulance() {
+  void nearestAmbulance(Function func) {
     determinePosition().then((value) {
       getRoutePoints(LatLng(_currentLat, _currentLng), LatLng(value.latitude, value.longitude)).then((value) {
         setState(() {
           polylinePoints = value;
         });
-        moveCar(value);
+        moveCar(value, func);
       });
     });
   }
 
-  void moveCar(List<LatLng> polylinePoints) {
-    Future.forEach(polylinePoints, (element) async {
+  void takeAmbulance() {
+    setState(
+      () {
+        navigationMode = !navigationMode;
+        _followOnLocationUpdate = navigationMode ? FollowOnLocationUpdate.always : FollowOnLocationUpdate.never;
+        _turnOnHeadingUpdate = navigationMode ? TurnOnHeadingUpdate.always : TurnOnHeadingUpdate.never;
+      },
+    );
+    if (navigationMode) {
+      _followCurrentLocationStreamController.add(18);
+      _turnHeadingUpStreamController.add(null);
+    }
+  }
+
+  void moveCar(List<LatLng> polylinePoints, Function func) async {
+    await Future.forEach(polylinePoints, (element) async {
       await Future.delayed(const Duration(seconds: 1)).then((value) {
         headingStreamController.add(
           LocationMarkerHeading(
@@ -114,14 +135,28 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         );
       });
     });
+    func();
   }
+
+  final phoneNumber = Uri.parse('tel:103');
+  final smsNumber = Uri.parse('sms:103');
 
   @override
   Widget build(BuildContext context) {
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
+    // get mapprovider
+    final mapProvider = Provider.of<MapProvider>(context);
+    if (mapProvider.isRun) {
+      print('car is running');
+      nearestAmbulance(mapProvider.makeItZero);
+      mapProvider.addOne();
+    }
+
+    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
-          // custom app bar
           Container(
             padding: const EdgeInsets.all(10),
             color: Colors.red,
@@ -169,20 +204,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     backgroundColor: navigationMode ? Colors.blue : Colors.grey,
                     foregroundColor: Colors.white,
                     onPressed: () {
-                      setState(
-                        () {
-                          navigationMode = !navigationMode;
-                          _followOnLocationUpdate = navigationMode ? FollowOnLocationUpdate.always : FollowOnLocationUpdate.never;
-                          _turnOnHeadingUpdate = navigationMode ? TurnOnHeadingUpdate.always : TurnOnHeadingUpdate.never;
-                        },
-                      );
-                      if (navigationMode) {
-                        // this is only test mode
-                        // it is going to be removed
-                        nearestAmbulance();
-                        _followCurrentLocationStreamController.add(18);
-                        _turnHeadingUpStreamController.add(null);
-                      }
+                      takeAmbulance();
                     },
                     child: const Icon(
                       Icons.navigation_outlined,
@@ -208,9 +230,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   style: LocationMarkerStyle(
                     marker: DefaultLocationMarker(
                       // color: Colors.transparent,
-                      child: Image.asset(
-                        'assets/gps_map_car.png',
-                      ),
+                      child: Image.asset('assets/gps_map_car.png'),
                     ),
                     markerDirection: MarkerDirection.heading,
                     markerSize: const Size.square(40),
@@ -223,12 +243,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
-                    marker: DefaultLocationMarker(
-                      child: Icon(
-                        Icons.navigation,
-                        color: Colors.white,
-                      ),
-                    ),
+                    marker: DefaultLocationMarker(child: Icon(Icons.navigation, color: Colors.white)),
                     markerSize: Size(40, 40),
                     markerDirection: MarkerDirection.heading,
                   ),
@@ -242,6 +257,129 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           ),
         ]),
       ),
+      bottomNavigationBar: BottomAppBar(
+        height: 60,
+        elevation: 20,
+        shape: const CircularNotchedRectangle(),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // we're gonna change this  to active and inactive images
+          children: [
+            const Spacer(flex: 1),
+            IconButton(icon: Image.asset(ambulanceActive), onPressed: () {}),
+            const Spacer(flex: 2),
+            IconButton(
+              icon: Image.asset(spravochnik),
+              onPressed: () {
+                context.goNamed(CatalogScreen.routeName);
+              },
+            ),
+            const Spacer(flex: 4),
+            IconButton(
+              icon: Image.asset(info),
+              onPressed: () {
+                context.goNamed(InfoScreen.routeName);
+              },
+            ),
+            const Spacer(flex: 2),
+            IconButton(
+              icon: Image.asset(profile),
+              onPressed: () {
+                context.goNamed(ProfilScreen.routeName);
+              },
+            ),
+            const Spacer(flex: 1),
+          ],
+        ),
+      ),
+      floatingActionButton: SizedBox(
+        width: 70,
+        height: 70,
+        child: SpeedDial(
+          icon: MyFlutterApp.logo1034,
+          activeIcon: Icons.close,
+          iconTheme: const IconThemeData(color: Colors.red, size: 56),
+          visible: true,
+          closeManually: false,
+          childrenButtonSize: Size(width * 0.9, 85),
+          curve: Curves.bounceIn,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          onOpen: () => print('OPENING DIAL'),
+          onClose: () => print('DIAL CLOSED'),
+          tooltip: '102',
+          heroTag: 'speed-dial-hero-tag',
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 8.0,
+          shape: const CircleBorder(),
+          children: [
+            SpeedDialChild(
+              child: ListTile(
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                leading: const Icon(Icons.sms),
+                title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              onTap: () async {
+                if (await canLaunchUrl(smsNumber)) {
+                  await launchUrl(smsNumber);
+                } else {
+                  throw 'Could not launch $smsNumber';
+                }
+              },
+            ),
+            SpeedDialChild(
+              child: ListTile(
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                leading: const Icon(Icons.phone_iphone_rounded),
+                title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              onTap: () async {
+                if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
+                  await launchUrl(Uri.parse('tel:+998940086601'));
+                } else {
+                  throw 'Could not launch ${Uri.parse('tel:+998940086601')}';
+                }
+              },
+            ),
+            SpeedDialChild(
+              child: ListTile(
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                leading: const Icon(Icons.place_outlined),
+                title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
+                ),
+              ),
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+              onTap: () {
+                if (!mapProvider.isRun) {
+                  nearestAmbulance(mapProvider.makeItZero);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
