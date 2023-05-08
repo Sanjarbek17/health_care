@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/main_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 
 class EditingProfile extends StatefulWidget {
@@ -62,6 +63,8 @@ class _EditingProfileState extends State<EditingProfile> {
 
   @override
   Widget build(BuildContext context) {
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     final ImagePickerPlatform imagePickerImplementation = ImagePickerPlatform.instance;
     if (imagePickerImplementation is ImagePickerAndroid) {
       imagePickerImplementation.useAndroidPhotoPicker = true;
@@ -72,9 +75,9 @@ class _EditingProfileState extends State<EditingProfile> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(
-          'Изменить профиль',
-          style: TextStyle(
+        title: Text(
+          language.isRussian ? 'Изменить профиль' : 'Profilni tahrirlash',
+          style: const TextStyle(
             fontFamily: 'Material Icons',
             fontSize: 23,
             fontWeight: FontWeight.w500,
@@ -111,8 +114,8 @@ class _EditingProfileState extends State<EditingProfile> {
                                 onPressed: () {
                                   _getImage(ImageSource.camera).then((value) => value ? Navigator.of(context).pop() : null);
                                 },
-                                child: const Text(
-                                  'Take photo',
+                                child: Text(
+                                  language.isRussian ? 'Фотографировать' : 'Rasmga olish',
                                   style: dialogStyle,
                                 ),
                               ),
@@ -120,8 +123,8 @@ class _EditingProfileState extends State<EditingProfile> {
                                 onPressed: () {
                                   _getImage(ImageSource.gallery).then((value) => value ? Navigator.of(context).pop() : null);
                                 },
-                                child: const Text(
-                                  'Choose from library',
+                                child: Text(
+                                  language.isRussian ? 'Выбрать из библиотеки' : 'Galareyadan tanlash',
                                   style: dialogStyle,
                                 ),
                               ),
@@ -137,8 +140,8 @@ class _EditingProfileState extends State<EditingProfile> {
                                         });
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text(
-                                        'Remove photo',
+                                      child: Text(
+                                        language.isRussian ? 'Удалить фото' : 'Olib tashlash',
                                         style: dialogStyle,
                                       ),
                                     )
@@ -146,8 +149,8 @@ class _EditingProfileState extends State<EditingProfile> {
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text(
-                                        'Cencel',
+                                      child: Text(
+                                        language.isRussian ? 'Отмена' : 'Bekor qilish',
                                         style: dialogStyle,
                                       ),
                                     ),
@@ -190,8 +193,8 @@ class _EditingProfileState extends State<EditingProfile> {
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).nameController,
-              decoration: const InputDecoration(
-                labelText: 'Имя',
+              decoration: InputDecoration(
+                labelText: language.isRussian ? 'Имя' : 'Ism',
               ),
             ),
           ),
@@ -199,8 +202,8 @@ class _EditingProfileState extends State<EditingProfile> {
             padding: const EdgeInsets.only(left: 18, right: 18, top: 10),
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).surnameController,
-              decoration: const InputDecoration(
-                labelText: 'Отчество',
+              decoration: InputDecoration(
+                labelText: language.isRussian ? 'Отчество' : 'Familiya',
               ),
             ),
           ),
@@ -209,8 +212,8 @@ class _EditingProfileState extends State<EditingProfile> {
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).birthController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Год рождения',
+              decoration: InputDecoration(
+                labelText: language.isRussian ? 'Год рождения' : 'Tug\'ilgan yili',
               ),
             ),
           ),
@@ -219,8 +222,8 @@ class _EditingProfileState extends State<EditingProfile> {
             child: TextField(
               controller: Provider.of<MainProvider>(context, listen: false).numberController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Номер телефона',
+              decoration: InputDecoration(
+                labelText: language.isRussian ? 'Номер телефона' : 'Telefon raqami',
               ),
             ),
           ),
@@ -230,7 +233,7 @@ class _EditingProfileState extends State<EditingProfile> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Сотрудник 103',
+                  language.isRussian ? 'Сотрудник 103' : 'Xodim 103',
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.w500,
@@ -253,7 +256,7 @@ class _EditingProfileState extends State<EditingProfile> {
             child: DropdownButton2(
               isExpanded: true,
               hint: Text(
-                'Выберите регион',
+                language.isRussian ? 'Выберите регион' : 'Viloyatni tanlash',
                 style: TextStyle(
                   // fontSize: 14,
                   color: Theme.of(context).hintColor,
@@ -304,7 +307,7 @@ class _EditingProfileState extends State<EditingProfile> {
               onPressed: () {
                 context.goNamed(ProfilScreen.routeName, extra: _image);
               },
-              child: const Text('Сохранить изменения'),
+              child: Text(language.isRussian ? 'Сохранить изменения' : 'O\'zgarishlarni saqlash'),
             ),
           ),
         ],

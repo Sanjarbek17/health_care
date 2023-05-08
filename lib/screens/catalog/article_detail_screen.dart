@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:health_care/screens/catalog/constant_infos.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
@@ -19,6 +20,9 @@ class ArticleDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final detailList = Provider.of<InfoProvider>(context, listen: false).aricleInfos;
+    final detailListUz = Provider.of<InfoProviderUz>(context, listen: false).aricleInfos;
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -46,7 +50,7 @@ class ArticleDetailScreen extends StatelessWidget {
           const Divider(),
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Text(detailList[indx]),
+            child: Text(language.isRussian ? detailList[indx] : detailListUz[indx]),
           ),
         ],
       ),

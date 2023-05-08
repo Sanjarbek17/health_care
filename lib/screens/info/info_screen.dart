@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../providers/main_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 import '../../style/my_flutter_app_icons.dart';
 import '../catalog/catalog_screen.dart';
@@ -26,12 +27,15 @@ class InfoScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     final list = Provider.of<MainProvider>(context).uderjeniya;
+    final listUz = Provider.of<MainProviderUz>(context).uderjeniya;
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text(
-            'Учереждения',
+          title: Text(
+            language.isRussian ? 'Учереждения' : 'Filiallar',
             style: appBarStyle,
           ),
         ),
@@ -54,16 +58,16 @@ class InfoScreen extends StatelessWidget {
                   context.goNamed(InfoDetail.routeName);
                 },
                 title: Text(
-                  list[index],
+                  language.isRussian ? list[index] : listUz[index],
                   style: listTilesStyle,
                 ),
-                subtitle: const Text(
-                  'Самаркандской области',
+                subtitle: Text(
+                  language.isRussian ? 'Самаркандской области' : 'Samarqand viloyati',
                   style: listTilesSubtitleStyle,
                 ),
               ),
               separatorBuilder: (context, index) => const Divider(),
-              itemCount: list.length,
+              itemCount: language.isRussian ? list.length : listUz.length,
             )
           ],
         ),
@@ -115,13 +119,13 @@ class InfoScreen extends StatelessWidget {
             iconTheme: const IconThemeData(color: Colors.red, size: 56),
             visible: true,
             closeManually: false,
-            childrenButtonSize: Size(width * 0.9, 70),
+            childrenButtonSize: Size(width * 0.9, 85),
             curve: Curves.bounceIn,
             overlayColor: Colors.black,
             overlayOpacity: 0.5,
             onOpen: () => print('OPENING DIAL'),
             onClose: () => print('DIAL CLOSED'),
-            tooltip: '102',
+            tooltip: '103',
             heroTag: 'speed-dial-hero-tag',
             backgroundColor: Colors.white,
             foregroundColor: Colors.black,
@@ -129,15 +133,18 @@ class InfoScreen extends StatelessWidget {
             shape: const CircleBorder(),
             children: [
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.sms),
-                  title: Text(mainButtonThirdText),
-                  subtitle: Text(mainButtonThirdSubtitleText, style: TextStyle(fontSize: 10)),
+                  leading: const Icon(Icons.sms),
+                  title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+                  subtitle: Text(
+                    language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () async {
                   if (await canLaunchUrl(smsNumber)) {
                     await launchUrl(smsNumber);
@@ -147,18 +154,18 @@ class InfoScreen extends StatelessWidget {
                 },
               ),
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.phone_iphone_rounded),
-                  title: Text(mainButtonSecondText),
+                  leading: const Icon(Icons.phone_iphone_rounded),
+                  title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
                   subtitle: Text(
-                    mainButtonSecondSubtitleText,
-                    style: TextStyle(fontSize: 10),
+                    language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
                   ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () async {
                   if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
                     await launchUrl(Uri.parse('tel:+998940086601'));
@@ -168,15 +175,18 @@ class InfoScreen extends StatelessWidget {
                 },
               ),
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.place_outlined),
-                  title: Text(mainButtonFirstText),
-                  subtitle: Text(mainButtonFirstSubtitleText, style: TextStyle(fontSize: 10)),
+                  leading: const Icon(Icons.place_outlined),
+                  title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+                  subtitle: Text(
+                    language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () {
                   // get mapprovider
                   final mapProvider = Provider.of<MapProvider>(context, listen: false);

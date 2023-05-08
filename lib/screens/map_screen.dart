@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/main_provider.dart';
+import '../providers/translation_provider.dart';
 import '/screens/catalog/catalog_screen.dart';
 import 'info/info_screen.dart';
 import '../style/my_flutter_app_icons.dart';
@@ -142,6 +143,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   @override
   Widget build(BuildContext context) {
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     // get mapprovider
     final mapProvider = Provider.of<MapProvider>(context);
     if (mapProvider.isRun) {
@@ -299,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           iconTheme: const IconThemeData(color: Colors.red, size: 56),
           visible: true,
           closeManually: false,
-          childrenButtonSize: Size(width * 0.9, 70),
+          childrenButtonSize: Size(width * 0.9, 85),
           curve: Curves.bounceIn,
           overlayColor: Colors.black,
           overlayOpacity: 0.5,
@@ -313,15 +316,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           shape: const CircleBorder(),
           children: [
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
-                leading: Icon(Icons.sms),
-                title: Text(mainButtonThirdText),
-                subtitle: Text(mainButtonThirdSubtitleText, style: TextStyle(fontSize: 10)),
+                leading: const Icon(Icons.sms),
+                title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
+                ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () async {
                 if (await canLaunchUrl(smsNumber)) {
                   await launchUrl(smsNumber);
@@ -331,18 +337,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
               },
             ),
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
-                leading: Icon(Icons.phone_iphone_rounded),
-                title: Text(mainButtonSecondText),
+                leading: const Icon(Icons.phone_iphone_rounded),
+                title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
                 subtitle: Text(
-                  mainButtonSecondSubtitleText,
-                  style: TextStyle(fontSize: 10),
+                  language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
                 ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () async {
                 if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
                   await launchUrl(Uri.parse('tel:+998940086601'));
@@ -352,15 +358,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
               },
             ),
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
-                leading: Icon(Icons.place_outlined),
-                title: Text(mainButtonFirstText),
-                subtitle: Text(mainButtonFirstSubtitleText, style: TextStyle(fontSize: 10)),
+                leading: const Icon(Icons.place_outlined),
+                title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                  style: const TextStyle(fontSize: 10),
+                ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () {
                 if (!mapProvider.isRun) {
                   nearestAmbulance(mapProvider.makeItZero);

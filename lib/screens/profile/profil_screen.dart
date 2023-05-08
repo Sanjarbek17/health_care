@@ -13,11 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import '../../providers/main_provider.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/my_flutter_app_icons.dart';
 import '../constants.dart';
 import '../info/info_screen.dart';
 
-class ProfilScreen extends StatefulWidget {
+class ProfilScreen extends StatefulWidget with ChangeNotifier {
   File? image;
   ProfilScreen({super.key, this.image});
   static const routeName = 'profile';
@@ -42,18 +43,31 @@ class _ProfilScreenState extends State<ProfilScreen> {
       imagePickerImplementation.useAndroidPhotoPicker = true;
     }
     final width = MediaQuery.of(context).size.width;
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
         centerTitle: true,
-        title: const Text(
-          'Информация о пользователе',
+        title: Text(
+          language.isRussian ? 'Информация о пользователе' : 'Foydalanuvchi ma\'lumotlari',
           style: TextStyle(
             fontFamily: 'Material Icons',
             fontSize: 23,
             fontWeight: FontWeight.w500,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                Provider.of<Translate>(context, listen: false).toggleLanguage();
+              });
+            },
+            icon: Text(Provider.of<Translate>(context, listen: false).isRussian ? 'Uz' : 'Ru'),
+          )
+        ],
       ),
       body: ListView(
         children: [
@@ -153,48 +167,12 @@ class _ProfilScreenState extends State<ProfilScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListTile(
-              title: Text(Provider.of<MainProvider>(context, listen: false).selectedValue ?? 'No region selected'),
+              title: Text(
+                language.isRussian ? (Provider.of<MainProvider>(context, listen: false).selectedValue ?? 'Регион не выбран') : (Provider.of<MainProvider>(context, listen: false).selectedValue ?? 'Viloyat tanlanmagan'),
+              ),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15, right: 15),
-          //   child: DropdownButton2(
-          //     isExpanded: true,
-          //     hint: Text(
-          //       'Выберите регион',
-          //       style: TextStyle(
-          //         // fontSize: 14,
-          //         color: Theme.of(context).hintColor,
-          //       ),
-          //     ),
-          //     items: items
-          //         .map(
-          //           (item) => DropdownMenuItem<String>(
-          //             value: item,
-          //             child: Text(
-          //               item,
-          //               style: const TextStyle(
-          //                 fontSize: 14,
-          //               ),
-          //             ),
-          //           ),
-          //         )
-          //         .toList(),
-          //     value: Provider.of<MainProvider>(context, listen: false).selectedValue,
-          //     onChanged: (value) {
-          //       setState(() {
-          //         Provider.of<MainProvider>(context, listen: false).selectedValue = value as String;
-          //       });
-          //     },
-          //     buttonStyleData: const ButtonStyleData(
-          //       height: 50,
-          //       // width: 10,
-          //     ),
-          //     menuItemStyleData: const MenuItemStyleData(
-          //       height: 50,
-          //     ),
-          //   ),
-          // ),
+
           Padding(
             padding: const EdgeInsets.only(
               left: 20,
@@ -212,7 +190,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
               onPressed: () {
                 context.goNamed(EditingProfile.routeName, extra: widget.image);
               },
-              child: Text('Изменить профиль'),
+              child: Text(language.isRussian ? 'Изменить профиль' : 'Profilni tahrirlash'),
             ),
           ),
         ],
@@ -265,7 +243,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
           iconTheme: const IconThemeData(color: Colors.red, size: 56),
           visible: true,
           closeManually: false,
-          childrenButtonSize: Size(width * 0.9, 70),
+          childrenButtonSize: Size(width * 0.9, 85),
           curve: Curves.bounceIn,
           overlayColor: Colors.black,
           overlayOpacity: 0.5,
@@ -279,15 +257,18 @@ class _ProfilScreenState extends State<ProfilScreen> {
           shape: const CircleBorder(),
           children: [
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
                 leading: Icon(Icons.sms),
-                title: Text(mainButtonThirdText),
-                subtitle: Text(mainButtonThirdSubtitleText, style: TextStyle(fontSize: 10)),
+                title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () async {
                 if (await canLaunchUrl(smsNumber)) {
                   await launchUrl(smsNumber);
@@ -297,18 +278,18 @@ class _ProfilScreenState extends State<ProfilScreen> {
               },
             ),
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
                 leading: Icon(Icons.phone_iphone_rounded),
-                title: Text(mainButtonSecondText),
+                title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
                 subtitle: Text(
-                  mainButtonSecondSubtitleText,
+                  language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
                   style: TextStyle(fontSize: 10),
                 ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () async {
                 if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
                   await launchUrl(Uri.parse('tel:+998940086601'));
@@ -318,15 +299,18 @@ class _ProfilScreenState extends State<ProfilScreen> {
               },
             ),
             SpeedDialChild(
-              child: const ListTile(
+              child: ListTile(
                 textColor: Colors.white,
                 iconColor: Colors.white,
                 leading: Icon(Icons.place_outlined),
-                title: Text(mainButtonFirstText),
-                subtitle: Text(mainButtonFirstSubtitleText, style: TextStyle(fontSize: 10)),
+                title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+                subtitle: Text(
+                  language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                  style: TextStyle(fontSize: 10),
+                ),
               ),
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
               onTap: () {
                 // get mapprovider
                 final mapProvider = Provider.of<MapProvider>(context, listen: false);
