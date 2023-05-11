@@ -13,9 +13,9 @@ import '/screens/info/info_screen.dart';
 import '/screens/map_screen.dart';
 import '/screens/profile/editing_profile.dart';
 import '/screens/profile/profil_screen.dart';
-
 import './style/main_style.dart';
 import 'screens/info/info_detail.dart';
+
 
 void main() async {
   runApp(const MainRoute());

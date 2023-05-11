@@ -19,7 +19,7 @@ import 'info_detail.dart';
 class InfoScreen extends StatelessWidget {
   InfoScreen({super.key});
   static const routeName = 'info';
-  final phoneNumber = Uri.parse('tel:+998940086601');
+  final phoneNumber = Uri.parse('tel:103');
   final smsNumber = Uri.parse('sms:103');
 
   @override
