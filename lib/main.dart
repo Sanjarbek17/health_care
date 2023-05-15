@@ -1,21 +1,23 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/screens/catalog/article_detail_screen.dart';
-import 'package:health_care/screens/catalog/articles.dart';
-import 'package:health_care/screens/catalog/catalog_screen.dart';
-import 'package:health_care/screens/info/info_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/screens/profile/editing_profile.dart';
-import 'package:health_care/screens/profile/profil_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
+import '/providers/main_provider.dart';
+import '/providers/translation_provider.dart';
+import '/screens/catalog/article_detail_screen.dart';
+import '/screens/catalog/articles.dart';
+import '/screens/catalog/catalog_screen.dart';
+import '/screens/catalog/constant_infos.dart';
+import '/screens/info/info_screen.dart';
+import '/screens/map_screen.dart';
+import '/screens/profile/editing_profile.dart';
+import '/screens/profile/profil_screen.dart';
 import './style/main_style.dart';
 import 'screens/info/info_detail.dart';
 
-void main() {
+
+void main() async {
   runApp(const MainRoute());
 }
 
@@ -31,7 +33,14 @@ class _MainRouteState extends State<MainRoute> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => MainProvider()),
+        ChangeNotifierProvider(create: (context) => MainProviderUz()),
         ChangeNotifierProvider(create: (context) => MapProvider()),
+        ChangeNotifierProvider(create: (context) => InfoProvider()),
+        ChangeNotifierProvider(create: (context) => InfoProviderUz()),
+        ChangeNotifierProvider(create: (context) => Translate()),
+        ChangeNotifierProvider(
+          create: (context) => ProfilScreen(),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -74,7 +83,7 @@ class _MainRouteState extends State<MainRoute> {
                   GoRoute(
                     path: 'info-detail',
                     name: InfoDetail.routeName,
-                    builder: (context, state) => InfoDetail(),
+                    builder: (context, state) => const InfoDetail(),
                   ),
                 ],
               ),

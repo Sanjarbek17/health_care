@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/screens/catalog/article_detail_screen.dart';
 import 'package:provider/provider.dart';
 
+import '/providers/main_provider.dart';
+import '/screens/catalog/article_detail_screen.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
 import '../constants.dart';
 
@@ -18,7 +19,9 @@ class Articles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final articles = Provider.of<MainProvider>(context).articles;
-
+    final articlesUz = Provider.of<MainProviderUz>(context).articles;
+// Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -31,8 +34,8 @@ class Articles extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        title: const Text(
-          'Справочник',
+        title: Text(
+          language.isRussian ? 'Статьи' : 'Maqolalar',
           style: appBarStyle,
         ),
       ),
@@ -47,13 +50,13 @@ class Articles extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Первая помощь',
-                    style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
+                  Text(
+                    language.isRussian ? 'Первая помощь' : 'Birinchi yordam',
+                    style: const TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                   ),
-                  const Text(
-                    '11 статей',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  Text(
+                    language.isRussian ? '11 статей' : '11 ta maqola',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -70,7 +73,7 @@ class Articles extends StatelessWidget {
                 });
               },
               title: Text(
-                articles[index],
+                language.isRussian ? articles[index] : articlesUz[index],
                 style: listTilesStyle,
               ),
             ),

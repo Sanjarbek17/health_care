@@ -3,15 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/providers/main_provider.dart';
-import 'package:health_care/screens/catalog/articles.dart';
-import 'package:health_care/screens/constants.dart';
-import 'package:health_care/screens/info/info_screen.dart';
-import 'package:health_care/screens/map_screen.dart';
-import 'package:health_care/style/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '/providers/main_provider.dart';
+import '/screens/catalog/articles.dart';
+import '/screens/catalog/constant_infos.dart';
+import '/screens/constants.dart';
+import '/screens/info/info_screen.dart';
+import '/screens/map_screen.dart';
+import '/style/constant.dart';
+import '../../providers/translation_provider.dart';
 import '../../style/my_flutter_app_icons.dart';
 import '../profile/profil_screen.dart';
 
@@ -23,14 +25,21 @@ class CatalogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
+    // Names list Providers
     final list = Provider.of<MainProvider>(context, listen: false).names;
+    final listUz = Provider.of<MainProviderUz>(context, listen: false).names;
+    // Constatns Providers
+    final constants = Provider.of<InfoProvider>(context, listen: false);
+    final constantsUz = Provider.of<InfoProviderUz>(context, listen: false);
+    // Language Provider
+    final language = Provider.of<Translate>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           // toolbarHeight: ,
           centerTitle: true,
-          title: const Text(
-            'Справочник',
+          title: Text(
+            language.isRussian ? constants.catalogAppBarTitle : constantsUz.catalogAppBarTitle,
             style: appBarStyle,
           ),
         ),
@@ -44,14 +53,14 @@ class CatalogScreen extends StatelessWidget {
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text(
-                      'Первая помощь',
-                      style: TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
+                      language.isRussian ? 'Первая помощь' : 'Birinchi yordam',
+                      style: const TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      '11 статей',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      language.isRussian ? '11 статей' : '11 ta maqola',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -65,22 +74,22 @@ class CatalogScreen extends StatelessWidget {
                   context.goNamed(
                     Articles.routeName,
                     extra: {
-                      'name': list[index],
+                      'name': (language.isRussian ? list : listUz)[index],
                       'index': index,
                     },
                   );
                 },
                 title: Text(
-                  list[index],
+                  (language.isRussian ? list : listUz)[index],
                   style: listTilesStyle,
                 ),
-                subtitle: const Text(
-                  '1 статья',
+                subtitle: Text(
+                  language.isRussian ? '1 статья' : '1 ta maqola',
                   style: listTilesSubtitleStyle,
                 ),
               ),
               separatorBuilder: (context, index) => const Divider(),
-              itemCount: list.length,
+              itemCount: (language.isRussian ? list : listUz).length,
             ),
           ],
         ),
@@ -132,7 +141,7 @@ class CatalogScreen extends StatelessWidget {
             iconTheme: const IconThemeData(color: Colors.red, size: 56),
             visible: true,
             closeManually: false,
-            childrenButtonSize: Size(width * 0.9, 70),
+            childrenButtonSize: Size(width * 0.9, 85),
             curve: Curves.bounceIn,
             overlayColor: Colors.black,
             overlayOpacity: 0.5,
@@ -146,15 +155,18 @@ class CatalogScreen extends StatelessWidget {
             shape: const CircleBorder(),
             children: [
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.sms),
-                  title: Text(mainButtonThirdText),
-                  subtitle: Text(mainButtonThirdSubtitleText, style: TextStyle(fontSize: 10)),
+                  leading: const Icon(Icons.sms),
+                  title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+                  subtitle: Text(
+                    language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () async {
                   if (await canLaunchUrl(smsNumber)) {
                     await launchUrl(smsNumber);
@@ -164,18 +176,18 @@ class CatalogScreen extends StatelessWidget {
                 },
               ),
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.phone_iphone_rounded),
-                  title: Text(mainButtonSecondText),
+                  leading: const Icon(Icons.phone_iphone_rounded),
+                  title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
                   subtitle: Text(
-                    mainButtonSecondSubtitleText,
-                    style: TextStyle(fontSize: 10),
+                    language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
                   ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () async {
                   if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
                     await launchUrl(Uri.parse('tel:+998940086601'));
@@ -185,15 +197,18 @@ class CatalogScreen extends StatelessWidget {
                 },
               ),
               SpeedDialChild(
-                child: const ListTile(
+                child: ListTile(
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                  leading: Icon(Icons.place_outlined),
-                  title: Text(mainButtonFirstText),
-                  subtitle: Text(mainButtonFirstSubtitleText, style: TextStyle(fontSize: 10)),
+                  leading: const Icon(Icons.place_outlined),
+                  title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+                  subtitle: Text(
+                    language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                    style: const TextStyle(fontSize: 10),
+                  ),
                 ),
                 backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 onTap: () {
                   // get mapprovider
                   final mapProvider = Provider.of<MapProvider>(context, listen: false);
