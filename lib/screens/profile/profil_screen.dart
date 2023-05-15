@@ -257,10 +257,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
         ),
       ),
       floatingActionButton: SizedBox(
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         child: SpeedDial(
-          icon: MyFlutterApp.logo1034,
+          icon: CustomIcons.fast2,
           activeIcon: Icons.close,
           iconTheme: const IconThemeData(color: Colors.red, size: 56),
           visible: true,
