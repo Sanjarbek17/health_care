@@ -92,9 +92,12 @@ flutter:
   # example:
   
   fonts:
-  - family:  MyFlutterApp
+  - family: fast 
     fonts:
-      - asset: fonts/MyFlutterApp.ttf
+      - asset: fonts/103.ttf
+  - family: fast2 
+    fonts:
+      - asset: fonts/fast2.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:

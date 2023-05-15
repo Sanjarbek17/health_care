@@ -15,11 +15,10 @@
 ///
 import 'package:flutter/widgets.dart';
 
-class MyFlutterApp {
-  MyFlutterApp._();
+class CustomIcons {
+  CustomIcons._();
 
-  static const _kFontFam = 'MyFlutterApp';
-  static const String? _kFontPkg = null;
+  static const IconData fast = IconData(0xe80d, fontFamily: 'fast', fontPackage: null);
 
-  static const IconData logo1034 = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData fast2 = IconData(0xe80f, fontFamily: 'fast2', fontPackage: null);
 }
