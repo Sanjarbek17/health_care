@@ -1,91 +1,165 @@
-// ignore_for_file: avoid_print, unrelated_type_equality_checks
+import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter/animation.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:permission_handler/permission_handler.dart';
+import '../providers/translation_provider.dart';
+import '../screens/catalog/catalog_screen.dart';
+import '../screens/constants.dart';
+import '../screens/info/info_screen.dart';
+import '../screens/map_screen.dart';
+import '../screens/profile/profil_screen.dart';
+import '../style/my_flutter_app_icons.dart';
 
-Future<Position> determinePosition() async {
-  bool serviceEnabled;
-  LocationPermission permission;
+class WidgetSpeedDial extends StatelessWidget {
+  final Uri smsNumber;
+  final double width;
+  final Translate language;
+  final void Function() onTap;
 
-  // Test if location services are enabled.
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    // Location services are not enabled don't continue
-    // accessing the position and request users of the
-    // App to enable the location services.
-    return Future.error('Location services are disabled.');
-  }
-
-  permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      // Permissions are denied, next time you could try
-      // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale
-      // returned true. According to Android guidelines
-      // your App should show an explanatory UI now.
-      return Future.error('Location permissions are denied');
-    }
-  }
-
-  if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately.
-    return Future.error('Location permissions are permanently denied, we cannot request permissions.');
-  }
-
-  // When we reach here, permissions are granted and we can
-  // continue accessing the position of the device.
-  return await Geolocator.getCurrentPosition();
-}
-
-Future statusPermission() async {
-  // Test if location services are enabled.
-  var status = await Permission.storage.status;
-
-  if (status == Permission.storage.isDenied) {
-    // Permissions are denied, next time you could try
-    // requesting permissions again (this is also where
-    // Android's shouldShowRequestPermissionRationale
-    // returned true. According to Android guidelines
-    // your App should show an explanatory UI now.
-    return Future.error('Location permissions are denied');
-  }
-  Permission.storage.request();
-  // When we reach here, permissions are granted and we can
-  // continue accessing the position of the device.
-  return status;
-}
-
-class LatLngTween extends Tween<LatLng> {
-  LatLngTween({required LatLng begin, required LatLng end}) : super(begin: begin, end: end);
+  const WidgetSpeedDial({super.key, required this.smsNumber, required this.width, required this.language, required this.onTap});
 
   @override
-  LatLng lerp(double t) {
-    return LatLng(begin!.latitude, begin!.longitude);
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 60,
+      height: 60,
+      child: SpeedDial(
+        icon: CustomIcons.fast2,
+        activeIcon: Icons.close,
+        iconTheme: const IconThemeData(color: Colors.red, size: 56),
+        visible: true,
+        closeManually: false,
+        childrenButtonSize: Size(width * 0.9, 85),
+        curve: Curves.bounceIn,
+        overlayColor: Colors.black,
+        overlayOpacity: 0.5,
+        onOpen: () => print('OPENING DIAL'),
+        onClose: () => print('DIAL CLOSED'),
+        tooltip: '103',
+        heroTag: 'speed-dial-hero-tag',
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 8.0,
+        shape: const CircleBorder(),
+        children: [
+          SpeedDialChild(
+            child: ListTile(
+              textColor: Colors.white,
+              iconColor: Colors.white,
+              leading: const Icon(Icons.sms),
+              title: Text(language.isRussian ? mainButtonThirdText : mainButtonThirdTextUz),
+              subtitle: Text(
+                language.isRussian ? mainButtonThirdSubtitleText : mainButtonThirdSubtitleTextUz,
+                style: const TextStyle(fontSize: 10),
+              ),
+            ),
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            onTap: () async {
+              if (await canLaunchUrl(smsNumber)) {
+                await launchUrl(smsNumber);
+              } else {
+                throw 'Could not launch $smsNumber';
+              }
+            },
+          ),
+          SpeedDialChild(
+            child: ListTile(
+              textColor: Colors.white,
+              iconColor: Colors.white,
+              leading: const Icon(Icons.phone_iphone_rounded),
+              title: Text(language.isRussian ? mainButtonSecondText : mainButtonSecondTextUz),
+              subtitle: Text(
+                language.isRussian ? mainButtonSecondSubtitleText : mainButtonSecondSubtitleTextUz,
+                style: const TextStyle(fontSize: 10),
+              ),
+            ),
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            onTap: () async {
+              if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
+                await launchUrl(Uri.parse('tel:+998940086601'));
+              } else {
+                throw 'Could not launch ${Uri.parse('tel:+998940086601')}';
+              }
+            },
+          ),
+          SpeedDialChild(
+            child: ListTile(
+              textColor: Colors.white,
+              iconColor: Colors.white,
+              leading: const Icon(Icons.place_outlined),
+              title: Text(language.isRussian ? mainButtonFirstText : mainButtonFirstSubtitleTextUz),
+              subtitle: Text(
+                language.isRussian ? mainButtonFirstSubtitleText : mainButtonFirstSubtitleTextUz,
+                style: const TextStyle(fontSize: 10),
+              ),
+            ),
+            backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            onTap: onTap,
+          ),
+        ],
+      ),
+    );
   }
 }
 
-Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
-  final String apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bbbb913eeda14ab1b42f177bd4cb4e2d&start=${start.longitude},${start.latitude},&end=${end.longitude},${end.latitude}';
-  print(apiUrl);
+class BottomBar extends StatelessWidget {
+  final String first;
+  final String second;
+  final String third;
+  final String fourth;
+  const BottomBar({
+    super.key,
+    required this.first,
+    required this.second,
+    required this.third,
+    required this.fourth,
+  });
 
-  final response = await http.get(Uri.parse(apiUrl));
-  if (response.statusCode == 200) {
-    final decodedData = jsonDecode(response.body);
-    // print(decodedData);
-    final geometry = decodedData['features'][0]['geometry']['coordinates'];
-    print(geometry);
-    final routePoints = <LatLng>[];
-    for (final point in geometry) {
-      routePoints.add(LatLng(point[1], point[0]));
-    }
-    return routePoints;
-  } else {
-    throw Exception('Failed to load route data');
+  @override
+  Widget build(BuildContext context) {
+    return BottomAppBar(
+      height: 60,
+      elevation: 20,
+      shape: const CircularNotchedRectangle(),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // we're gonna change this  to active and inactive images
+        children: [
+          const Spacer(flex: 1),
+          IconButton(
+              icon: Image.asset(first),
+              onPressed: () {
+                context.goNamed(HomeScreen.routeName);
+              }),
+          const Spacer(flex: 2),
+          IconButton(
+            icon: Image.asset(second),
+            onPressed: () {
+              context.goNamed(CatalogScreen.routeName);
+            },
+          ),
+          const Spacer(flex: 4),
+          IconButton(
+            icon: Image.asset(third),
+            onPressed: () {
+              context.goNamed(InfoScreen.routeName);
+            },
+          ),
+          const Spacer(flex: 2),
+          IconButton(
+            icon: Image.asset(fourth),
+            onPressed: () {
+              context.goNamed(ProfilScreen.routeName);
+            },
+          ),
+          const Spacer(flex: 1),
+        ],
+      ),
+    );
   }
 }
