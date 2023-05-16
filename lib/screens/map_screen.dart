@@ -218,22 +218,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                   ],
                 ),
                 // the ambulance car
-                CurrentLocationLayer(
-                  positionStream: positionStreamController.stream,
-                  headingStream: headingStreamController.stream,
-                  style: LocationMarkerStyle(
-                    marker: DefaultLocationMarker(
-                      // color: Colors.transparent,
-                      child: Image.asset('assets/gps_map_car.png'),
-                    ),
-                    markerDirection: MarkerDirection.heading,
-                    markerSize: const Size.square(40),
-                    // showAccuracyCircle: false,
-                    // showHeadingSector: false,
-                    accuracyCircleColor: Colors.black,
-                    headingSectorColor: Colors.red,
-                  ),
-                ),
+                // CurrentLocationLayer(
+                //   positionStream: positionStreamController.stream,
+                //   headingStream: headingStreamController.stream,
+                //   style: LocationMarkerStyle(
+                //     marker: DefaultLocationMarker(
+                //       // color: Colors.transparent,
+                //       child: Image.asset('assets/gps_map_car.png'),
+                //     ),
+                //     markerDirection: MarkerDirection.heading,
+                //     markerSize: const Size.square(40),
+                //     // showAccuracyCircle: false,
+                //     // showHeadingSector: false,
+                //     accuracyCircleColor: Colors.black,
+                //     headingSectorColor: Colors.red,
+                //   ),
+                // ),
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
