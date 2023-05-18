@@ -63,6 +63,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
       // change driver location
       Provider.of<DriverLocationProvider>(context, listen: false).setLatitude(position['latitude'], position['longitude']);
+      // driver location enabled
+      Provider.of<DriverLocationProvider>(context, listen: false).setLocationEnabled(true);
+
+      // get map provider
+      final mapProvider = Provider.of<MapProvider>(context, listen: false);
+
+      nearestAmbulance(mapProvider.makeItZero);
       print("message recieved");
       print(event.notification!.body);
       print(event.data['position']);
@@ -176,6 +183,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
   @override
   Widget build(BuildContext context) {
+    // get driver location provider
+    final driverLocationProvider = Provider.of<DriverLocationProvider>(context);
     // Language Provider
     final language = Provider.of<Translate>(context, listen: false);
     // get mapprovider
@@ -257,22 +266,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                   ],
                 ),
                 // the ambulance car
-                // CurrentLocationLayer(
-                //   positionStream: positionStreamController.stream,
-                //   headingStream: headingStreamController.stream,
-                //   style: LocationMarkerStyle(
-                //     marker: DefaultLocationMarker(
-                //       // color: Colors.transparent,
-                //       child: Image.asset('assets/gps_map_car.png'),
-                //     ),
-                //     markerDirection: MarkerDirection.heading,
-                //     markerSize: const Size.square(40),
-                //     // showAccuracyCircle: false,
-                //     // showHeadingSector: false,
-                //     accuracyCircleColor: Colors.black,
-                //     headingSectorColor: Colors.red,
-                //   ),
-                // ),
+                if (driverLocationProvider.isLocationEnabled)
+                  CurrentLocationLayer(
+                    positionStream: positionStreamController.stream,
+                    headingStream: headingStreamController.stream,
+                    style: LocationMarkerStyle(
+                      marker: DefaultLocationMarker(
+                        // color: Colors.transparent,
+                        child: Image.asset('assets/gps_map_car.png'),
+                      ),
+                      markerDirection: MarkerDirection.heading,
+                      markerSize: const Size.square(40),
+                      // showAccuracyCircle: false,
+                      // showHeadingSector: false,
+                      accuracyCircleColor: Colors.black,
+                      headingSectorColor: Colors.red,
+                    ),
+                  ),
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
