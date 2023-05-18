@@ -47,7 +47,7 @@ Future statusPermission() async {
   // Test if location services are enabled.
   var status = await Permission.storage.status;
 
-  if (status == Permission.storage.isDenied) {
+  if (await Permission.storage.isDenied) {
     // Permissions are denied, next time you could try
     // requesting permissions again (this is also where
     // Android's shouldShowRequestPermissionRationale
@@ -72,14 +72,13 @@ class LatLngTween extends Tween<LatLng> {
 
 Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
   final String apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bbbb913eeda14ab1b42f177bd4cb4e2d&start=${start.longitude},${start.latitude},&end=${end.longitude},${end.latitude}';
-  print(apiUrl);
 
   final response = await http.get(Uri.parse(apiUrl));
   if (response.statusCode == 200) {
     final decodedData = jsonDecode(response.body);
     // print(decodedData);
     final geometry = decodedData['features'][0]['geometry']['coordinates'];
-    print(geometry);
+
     final routePoints = <LatLng>[];
     for (final point in geometry) {
       routePoints.add(LatLng(point[1], point[0]));
@@ -117,6 +116,6 @@ Future<void> sendMessage(Map data) async {
   // send post request using http library
   var r = await http.post(uri, body: bodyEncoded, headers: header);
 
+  // ignore: avoid_print
   print(r.statusCode);
-  print(r.body);
 }
