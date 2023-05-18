@@ -36,8 +36,8 @@ class WidgetSpeedDial extends StatelessWidget {
         curve: Curves.bounceIn,
         overlayColor: Colors.black,
         overlayOpacity: 0.5,
-        onOpen: () => print('OPENING DIAL'),
-        onClose: () => print('DIAL CLOSED'),
+        onOpen: () {},
+        onClose: () {},
         tooltip: '103',
         heroTag: 'speed-dial-hero-tag',
         backgroundColor: Colors.white,
@@ -109,6 +109,7 @@ class WidgetSpeedDial extends StatelessWidget {
             onTap: () async {
               Position p = await determinePosition();
               sendMessage({'position': p.toJson()});
+              // ignore: avoid_print
               print('send message');
             },
           ),
