@@ -100,11 +100,16 @@ class WidgetSpeedDial extends StatelessWidget {
             ),
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+            // onTap: () async {
+            //   Position position = await determinePosition();
+            //   sendMessage({
+            //     'position': position.toJson().toString(),
+            //   });
+            // },
             onTap: () async {
-              Position position = await determinePosition();
-              sendMessage({
-                'position': position.toJson().toString(),
-              });
+              Position p = await determinePosition();
+              sendMessage({'position': p.toJson()});
+              print('send message');
             },
           ),
         ],
