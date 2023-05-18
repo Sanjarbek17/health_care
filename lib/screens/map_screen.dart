@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
               content: Text(event.notification!.body!),
               actions: [
                 TextButton(
-                  child: Text("Ok"),
+                  child: const Text("Ok"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
