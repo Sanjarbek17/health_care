@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -14,10 +15,14 @@ import '/screens/map_screen.dart';
 import '/screens/profile/editing_profile.dart';
 import '/screens/profile/profil_screen.dart';
 import './style/main_style.dart';
+import 'auth/firebase_options.dart';
 import 'screens/info/info_detail.dart';
 
-
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MainRoute());
 }
 
