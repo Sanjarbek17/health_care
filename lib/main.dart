@@ -43,6 +43,7 @@ class _MainRouteState extends State<MainRoute> {
         ChangeNotifierProvider(create: (context) => InfoProvider()),
         ChangeNotifierProvider(create: (context) => InfoProviderUz()),
         ChangeNotifierProvider(create: (context) => Translate()),
+        ChangeNotifierProvider(create: (context) => DriverLocationProvider()),
         ChangeNotifierProvider(
           create: (context) => ProfilScreen(),
         ),
