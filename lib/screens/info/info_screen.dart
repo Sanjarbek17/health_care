@@ -1,9 +1,11 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
 import '../constants.dart';
 import '/screens/map_screen.dart';
@@ -72,14 +74,14 @@ class InfoScreen extends StatelessWidget {
           language: language,
           width: width,
           smsNumber: smsNumber,
-          onTap: () {
+          onTap: () async {
             // get mapprovider
             final mapProvider = Provider.of<MapProvider>(context, listen: false);
-            // change toggle value
-            if (!mapProvider.isRun) {
-              mapProvider.addOne();
-            }
+            Position p = await determinePosition();
+            sendMessage({'position': p.toJson()});
+            print('send message');
 
+            // ignore: use_build_context_synchronously
             context.goNamed(
               HomeScreen.routeName,
               extra: mapProvider.isRun,

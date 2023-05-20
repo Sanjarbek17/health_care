@@ -3,11 +3,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker_android/image_picker_android.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
+import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
 import '../constants.dart';
 import '/screens/map_screen.dart';
@@ -197,14 +199,14 @@ class _ProfilScreenState extends State<ProfilScreen> {
         language: language,
         width: width,
         smsNumber: smsNumber,
-        onTap: () {
+        onTap: () async {
           // get mapprovider
           final mapProvider = Provider.of<MapProvider>(context, listen: false);
-          // change toggle value
-          if (!mapProvider.isRun) {
-            mapProvider.addOne();
-          }
+          Position p = await determinePosition();
+          sendMessage({'position': p.toJson()});
+          print('send message');
 
+          // ignore: use_build_context_synchronously
           context.goNamed(
             HomeScreen.routeName,
             extra: mapProvider.isRun,
