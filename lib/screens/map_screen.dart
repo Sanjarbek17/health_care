@@ -91,6 +91,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           });
     });
 
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) {
+      Map position = jsonDecode(event.data['position']);
+
+      // change driver location
+      Provider.of<DriverLocationProvider>(context, listen: false).setLatitude(position['latitude'], position['longitude']);
+      // driver location enabled
+      Provider.of<DriverLocationProvider>(context, listen: false).setLocationEnabled(true);
+
+      // get map provider
+      final mapProvider = Provider.of<MapProvider>(context, listen: false);
+
+      nearestAmbulance(mapProvider.makeItZero);
+      print("message recieved");
+      print(event.notification!.body);
+      print(event.data['position']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(event.notification!.title!),
+              content: Text(event.notification!.body!),
+              actions: [
+                TextButton(
+                  child: const Text("Ok"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    });
+
     positionStreamController = StreamController()
       ..add(
         LocationMarkerPosition(
