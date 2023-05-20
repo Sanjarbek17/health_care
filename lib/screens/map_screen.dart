@@ -61,18 +61,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
       Map position = jsonDecode(event.data['position']);
 
+      DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
       // change driver location
-      Provider.of<DriverLocationProvider>(context, listen: false).setLatitude(position['latitude'], position['longitude']);
+      // driver.setLatitude(position['latitude'], position['longitude']);
       // driver location enabled
-      Provider.of<DriverLocationProvider>(context, listen: false).setLocationEnabled(true);
+      driver.setLocationEnabled(true);
 
-      // get map provider
       final mapProvider = Provider.of<MapProvider>(context, listen: false);
+      if (!mapProvider.isRun) {
+        print('car is running');
+        nearestAmbulance(mapProvider.makeItZero);
+        mapProvider.addOne();
+      }
 
-      nearestAmbulance(mapProvider.makeItZero);
-      print("message recieved");
-      print(event.notification!.body);
-      print(event.data['position']);
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -93,14 +94,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) {
       Map position = jsonDecode(event.data['position']);
-
+      DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
       // change driver location
-      Provider.of<DriverLocationProvider>(context, listen: false).setLatitude(position['latitude'], position['longitude']);
+      // driver.setLatitude(position['latitude'], position['longitude']);
       // driver location enabled
-      Provider.of<DriverLocationProvider>(context, listen: false).setLocationEnabled(true);
-
-      final mapProvider = Provider.of<MapProvider>(context);
-      if (mapProvider.isRun) {
+      driver.setLocationEnabled(true);
+      final mapProvider = Provider.of<MapProvider>(context, listen: false);
+      if (!mapProvider.isRun) {
         print('car is running');
         nearestAmbulance(mapProvider.makeItZero);
         mapProvider.addOne();
@@ -160,8 +160,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   }
 
   void nearestAmbulance(Function func) {
+    print('start car');
     determinePosition().then((value) {
       getRoutePoints(LatLng(_currentLat, _currentLng), LatLng(value.latitude, value.longitude)).then((value) {
+        print('routes geted');
         setState(() {
           polylinePoints = value;
         });
@@ -220,12 +222,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     // Language Provider
     final language = Provider.of<Translate>(context, listen: false);
     // get mapprovider
-    final mapProvider = Provider.of<MapProvider>(context);
-    if (mapProvider.isRun) {
-      print('car is running');
-      nearestAmbulance(mapProvider.makeItZero);
-      mapProvider.addOne();
-    }
+    // final mapProvider = Provider.of<MapProvider>(context, listen: false);
+    // if (!mapProvider.isRun) {
+    //   print('car is running');
+    //   nearestAmbulance(mapProvider.makeItZero);
+    //   mapProvider.addOne();
+    // }
 
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -298,23 +300,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                   ],
                 ),
                 // the ambulance car
-                if (driverLocationProvider.isLocationEnabled)
-                  CurrentLocationLayer(
-                    positionStream: positionStreamController.stream,
-                    headingStream: headingStreamController.stream,
-                    style: LocationMarkerStyle(
-                      marker: DefaultLocationMarker(
-                        // color: Colors.transparent,
-                        child: Image.asset('assets/gps_map_car.png'),
-                      ),
-                      markerDirection: MarkerDirection.heading,
-                      markerSize: const Size.square(40),
-                      // showAccuracyCircle: false,
-                      // showHeadingSector: false,
-                      accuracyCircleColor: Colors.black,
-                      headingSectorColor: Colors.red,
-                    ),
-                  ),
+                driverLocationProvider.isLocationEnabled
+                    ? CurrentLocationLayer(
+                        positionStream: positionStreamController.stream,
+                        headingStream: headingStreamController.stream,
+                        style: LocationMarkerStyle(
+                          marker: DefaultLocationMarker(
+                            // color: Colors.transparent,
+                            child: Image.asset('assets/gps_map_car.png'),
+                          ),
+                          markerDirection: MarkerDirection.heading,
+                          markerSize: const Size.square(40),
+                          // showAccuracyCircle: false,
+                          // showHeadingSector: false,
+                          accuracyCircleColor: Colors.black,
+                          headingSectorColor: Colors.red,
+                        ),
+                      )
+                    : Container(),
                 // the user marker
                 CurrentLocationLayer(
                   style: const LocationMarkerStyle(
