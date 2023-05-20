@@ -71,9 +71,12 @@ class LatLngTween extends Tween<LatLng> {
 }
 
 Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
-  final String apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bbbb913eeda14ab1b42f177bd4cb4e2d&start=${start.longitude},${start.latitude},&end=${end.longitude},${end.latitude}';
+  print('get ruotes started');
+  final String apiUrl = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=5b3ce3597851110001cf6248bbbb913eeda14ab1b42f177bd4cb4e2d&start=${start.longitude},${start.latitude},&end=${end.longitude},${end.latitude}&steps=true';
 
   final response = await http.get(Uri.parse(apiUrl));
+  print('serponse');
+  print(response.statusCode);
   if (response.statusCode == 200) {
     final decodedData = jsonDecode(response.body);
     // print(decodedData);

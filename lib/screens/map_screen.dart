@@ -40,9 +40,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   late StreamController<double?> _followCurrentLocationStreamController;
   late StreamController<void> _turnHeadingUpStreamController;
 
-  double _currentLat = 39.6548;
-  double _currentLng = 66.9597;
-
+  double _currentLat = 39.68056955590667;
+  double _currentLng = 66.94095809907301;
   late FirebaseMessaging messaging;
 
   @override
@@ -307,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
         smsNumber: smsNumber,
         onTap: () {
           if (!mapProvider.isRun) {
+            print('run');
             nearestAmbulance(mapProvider.makeItZero);
           }
         },
