@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable, avoid_print
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -59,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     messaging.subscribeToTopic('user');
 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      Map position = jsonDecode(event.data['position']);
+      // Map position = jsonDecode(event.data['position']);
 
       DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
       // change driver location
@@ -96,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) {
-      Map position = jsonDecode(event.data['position']);
+      // Map position = jsonDecode(event.data['position']);
       DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
       // change driver location
       // driver.setLatitude(position['latitude'], position['longitude']);
