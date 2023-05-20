@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class DriverLocationProvider with ChangeNotifier {
-  double _latitude = 39.6548;
-  double _longitude = 66.9597;
+  double _latitude = 39.68056955590667; //39.6548; //39.68056955590667, 66.94095809907301
+  double _longitude = 66.94095809907301; //66.9597;
 
   bool _isLocationEnabled = true;
 
