@@ -99,13 +99,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
       // driver location enabled
       Provider.of<DriverLocationProvider>(context, listen: false).setLocationEnabled(true);
 
-      // get map provider
-      final mapProvider = Provider.of<MapProvider>(context, listen: false);
-
-      nearestAmbulance(mapProvider.makeItZero);
-      print("message recieved");
-      print(event.notification!.body);
-      print(event.data['position']);
+      final mapProvider = Provider.of<MapProvider>(context);
+      if (mapProvider.isRun) {
+        print('car is running');
+        nearestAmbulance(mapProvider.makeItZero);
+        mapProvider.addOne();
+      }
       showDialog(
           context: context,
           builder: (BuildContext context) {
