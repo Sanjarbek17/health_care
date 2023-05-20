@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
       print('fiebase token');
       print(value);
     });
-
+    messaging.unsubscribeFromTopic('driver');
     messaging.subscribeToTopic('user');
 
     FirebaseMessaging.onMessage.listen((RemoteMessage event) {
