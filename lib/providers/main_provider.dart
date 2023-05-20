@@ -6,7 +6,7 @@ class DriverLocationProvider with ChangeNotifier {
   double _latitude = 39.68056955590667; //39.6548; //39.68056955590667, 66.94095809907301
   double _longitude = 66.94095809907301; //66.9597;
 
-  bool _isLocationEnabled = true;
+  bool _isLocationEnabled = false;
 
   double get latitude => _latitude;
   double get longitude => _longitude;
