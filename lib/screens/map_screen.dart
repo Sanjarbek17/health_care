@@ -78,7 +78,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(event.notification!.title!),
+              title: const Text(
+                'Ambulance is coming',
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
               content: Text(event.notification!.body!),
               actions: [
                 TextButton(
@@ -109,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text(event.notification!.title!),
+              title: const Text(
+                'Ambulance is coming',
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
               content: Text(event.notification!.body!),
               actions: [
                 TextButton(
