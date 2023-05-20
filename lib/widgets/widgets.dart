@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/widgets/functions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/translation_provider.dart';
@@ -100,13 +98,7 @@ class WidgetSpeedDial extends StatelessWidget {
             ),
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-            // onTap: onTap,
-            onTap: () async {
-              Position p = await determinePosition();
-              sendMessage({'position': p.toJson()});
-              // ignore: avoid_print
-              print('send message');
-            },
+            onTap: onTap,
           ),
         ],
       ),

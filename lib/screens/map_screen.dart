@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -301,16 +302,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
       ),
       bottomNavigationBar: const BottomBar(first: ambulanceActive, second: spravochnik, third: info, fourth: profile),
       floatingActionButton: WidgetSpeedDial(
-        language: language,
-        width: width,
-        smsNumber: smsNumber,
-        onTap: () {
-          if (!mapProvider.isRun) {
-            print('run');
-            nearestAmbulance(mapProvider.makeItZero);
-          }
-        },
-      ),
+          language: language,
+          width: width,
+          smsNumber: smsNumber,
+          // onTap: () {
+          //   if (!mapProvider.isRun) {
+          //     print('run');
+          //     nearestAmbulance(mapProvider.makeItZero);
+          //   }
+          // },
+          onTap: () async {
+            Position p = await determinePosition();
+            sendMessage({'position': p.toJson()});
+            print('send message');
+          }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
