@@ -12,12 +12,11 @@ import '/screens/catalog/articles.dart';
 import '/screens/catalog/catalog_screen.dart';
 import '/screens/catalog/constant_infos.dart';
 import '/screens/info/info_screen.dart';
-// import '/screens/map_screen.dart';
+import '/screens/map_screen.dart';
 import '/screens/profile/editing_profile.dart';
 import '/screens/profile/profil_screen.dart';
 import './style/main_style.dart';
 import 'auth/firebase_options.dart';
-import 'screens/chatgpt_screen.dart';
 import 'screens/info/info_detail.dart';
 
 Future<void> main() async {
@@ -55,8 +54,8 @@ class _MainRouteState extends State<MainRoute> {
         routerConfig: GoRouter(routes: [
           GoRoute(
             path: '/',
-            name: Chat.routeName,
-            builder: (context, state) => const Chat(),
+            name: HomeScreen.routeName,
+            builder: (context, state) => HomeScreen(),
             routes: [
               GoRoute(
                 path: 'catalog',

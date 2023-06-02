@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:health_care/screens/chatgpt_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/functions.dart';
@@ -37,36 +38,46 @@ class InfoScreen extends StatelessWidget {
             style: appBarStyle,
           ),
         ),
-        body: ListView(
+        body: Stack(
           children: [
-            SizedBox(
-              width: double.infinity,
-              height: height * 0.15,
-              child: Image.asset(
-                'assets/doctors_get_in_ambulance.jpg',
-                fit: BoxFit.fitWidth,
-              ),
+            ListView(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: height * 0.15,
+                  child: Image.asset('assets/doctors_get_in_ambulance.jpg', fit: BoxFit.fitWidth),
+                ),
+                const Divider(),
+                ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) => ListTile(
+                    onTap: () {
+                      context.goNamed(InfoDetail.routeName);
+                    },
+                    title: Text(
+                      language.isRussian ? list[index] : listUz[index],
+                      style: listTilesStyle,
+                    ),
+                    subtitle: Text(
+                      language.isRussian ? 'Самаркандской области' : 'Samarqand viloyati',
+                      style: listTilesSubtitleStyle,
+                    ),
+                  ),
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: language.isRussian ? list.length : listUz.length,
+                )
+              ],
             ),
-            const Divider(),
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) => ListTile(
-                onTap: () {
-                  context.goNamed(InfoDetail.routeName);
-                },
-                title: Text(
-                  language.isRussian ? list[index] : listUz[index],
-                  style: listTilesStyle,
-                ),
-                subtitle: Text(
-                  language.isRussian ? 'Самаркандской области' : 'Samarqand viloyati',
-                  style: listTilesSubtitleStyle,
-                ),
-              ),
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: language.isRussian ? list.length : listUz.length,
-            )
+            Positioned(
+                bottom: 35,
+                right: 35,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
+                  },
+                  icon: const Icon(Icons.help_outline, color: Colors.red, size: 60),
+                )),
           ],
         ),
         bottomNavigationBar: const BottomBar(first: ambulance, second: spravochnik, third: infoActive, fourth: profile),
