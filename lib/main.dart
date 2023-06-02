@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:health_care/providers/message_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,11 +12,12 @@ import '/screens/catalog/articles.dart';
 import '/screens/catalog/catalog_screen.dart';
 import '/screens/catalog/constant_infos.dart';
 import '/screens/info/info_screen.dart';
-import '/screens/map_screen.dart';
+// import '/screens/map_screen.dart';
 import '/screens/profile/editing_profile.dart';
 import '/screens/profile/profil_screen.dart';
 import './style/main_style.dart';
 import 'auth/firebase_options.dart';
+import 'screens/chatgpt_screen.dart';
 import 'screens/info/info_detail.dart';
 
 Future<void> main() async {
@@ -44,9 +46,8 @@ class _MainRouteState extends State<MainRoute> {
         ChangeNotifierProvider(create: (context) => InfoProviderUz()),
         ChangeNotifierProvider(create: (context) => Translate()),
         ChangeNotifierProvider(create: (context) => DriverLocationProvider()),
-        ChangeNotifierProvider(
-          create: (context) => ProfilScreen(),
-        ),
+        ChangeNotifierProvider(create: (context) => MessagesProvider()),
+        ChangeNotifierProvider(create: (context) => ProfilScreen()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
@@ -54,8 +55,8 @@ class _MainRouteState extends State<MainRoute> {
         routerConfig: GoRouter(routes: [
           GoRoute(
             path: '/',
-            name: HomeScreen.routeName,
-            builder: (context, state) => HomeScreen(),
+            name: Chat.routeName,
+            builder: (context, state) => const Chat(),
             routes: [
               GoRoute(
                 path: 'catalog',
