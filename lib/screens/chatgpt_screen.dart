@@ -20,11 +20,16 @@ class _ChatState extends State<Chat> {
 
   void chatCompleteWithSSE() {
     List<MessageProvider> messagesProvider = Provider.of<MessagesProvider>(context, listen: false).messages;
-    final request = ChatCompleteText(messages: [
-      Map.of(
-        messagesProvider[1].message.toJson(),
-      )
-    ], maxToken: 30, model: ChatModel.gptTurbo);
+    final request = ChatCompleteText(
+        messages: messagesProvider
+            .map((e) {
+              return e.message.toJson();
+            })
+            .toList()
+            .reversed
+            .toList(),
+        maxToken: 150,
+        model: ChatModel.gptTurbo);
 
     openAI.onChatCompletionSSE(request: request).listen((it) {
       messagesProvider[0].message.content += it.choices.last.message?.content ?? '';
@@ -37,9 +42,11 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     final List<MessageProvider> messages = Provider.of<MessagesProvider>(context).messages;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           leading: const BackButton(),
+          backgroundColor: Colors.red,
           title: const Text('Assistant'),
           actions: const [
             Padding(
@@ -75,26 +82,29 @@ class _ChatState extends State<Chat> {
               child: TextField(
                 controller: controller,
                 onTapOutside: (event) {
-                  print('tap outside');
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
                 decoration: InputDecoration(
-                  hintText: 'Ask me something',
+                  // border color
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: const BorderSide(color: Colors.red),
+                  ),
+                  hintText: 'Ask me a question',
                   suffixIcon: InkWell(
                     splashFactory: NoSplash.splashFactory,
                     onTap: () {
-                      chatCompleteWithSSE();
-                      print('send');
                       Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: controller.text, role: 'user')));
-                      // FocusManager.instance.primaryFocus?.unfocus();
+                      Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: '', role: 'assistant')));
+
                       setState(() {
                         controller.clear();
                       });
-                      Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: '', role: 'assistant')));
+                      chatCompleteWithSSE();
                     },
-                    child: const Icon(Icons.send),
+                    child: const Icon(Icons.send, color: Colors.red),
                   ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: Colors.red)),
                 ),
               ),
             ),

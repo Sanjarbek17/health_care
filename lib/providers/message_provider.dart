@@ -3,8 +3,6 @@ import 'package:health_care/models/message_model.dart';
 
 class MessagesProvider extends ChangeNotifier {
   final List<MessageProvider> _messages = [
-    MessageProvider(message: MessageModel(role: 'assistant', content: 'Do you have any other symptoms?')),
-    MessageProvider(message: MessageModel(role: 'user', content: 'I have a headache.')),
     MessageProvider(message: MessageModel(role: 'assistant', content: 'Hello! How can I help you?')),
   ];
 
