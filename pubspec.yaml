@@ -54,6 +54,7 @@ dependencies:
   firebase_messaging_platform_interface: ^4.5.0
   image_picker_platform_interface: ^2.6.3
   path: ^1.8.2
+  chat_gpt_sdk: ^2.1.6
 
 dev_dependencies:
   flutter_test:
