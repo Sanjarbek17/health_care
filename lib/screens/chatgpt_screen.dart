@@ -45,7 +45,7 @@ class _ChatState extends State<Chat> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          leading: const BackButton(),
+          leading: BackButton(onPressed: () => Navigator.pop(context)),
           backgroundColor: Colors.red,
           title: const Text('Assistant'),
           actions: const [
