@@ -78,10 +78,10 @@ class WidgetSpeedDial extends StatelessWidget {
             backgroundColor: Colors.red,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
             onTap: () async {
-              if (await canLaunchUrl(Uri.parse('tel:+998940086601'))) {
-                await launchUrl(Uri.parse('tel:+998940086601'));
+              if (await canLaunchUrl(Uri.parse('tel:103'))) {
+                await launchUrl(Uri.parse('tel:103'));
               } else {
-                throw 'Could not launch ${Uri.parse('tel:+998940086601')}';
+                throw 'Could not launch ${Uri.parse('tel:103')}';
               }
             },
           ),
