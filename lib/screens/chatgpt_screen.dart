@@ -15,7 +15,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  final openAI = OpenAI.instance.build(token: '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', baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)), enableLog: true);
+  final openAI = OpenAI.instance.build(token: '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', baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)), enableLog: true);
   TextEditingController controller = TextEditingController();
 
   void chatCompleteWithSSE() {
@@ -23,6 +23,7 @@ class _ChatState extends State<Chat> {
     final request = ChatCompleteText(
         messages: messagesProvider
             .map((e) {
+              print('provider ${e.message.content}');
               return e.message.toJson();
             })
             .toList()
