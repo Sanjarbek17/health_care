@@ -9,9 +9,11 @@ And you can also chat with the doctor AI to get some basic information about you
 
 ## Screenshots
 
+<div style="display: flex; flex-direction: row;">
 <img src="flutter_02.jpg" width="200" height="400" />
 <img src="flutter_01.jpg" width="200" height="400" />
 <img src="flutter_03.jpg" width="200" height="400" />
+</div>
 
 ## Getting Started
 
