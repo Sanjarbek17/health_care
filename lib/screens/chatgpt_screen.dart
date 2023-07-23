@@ -23,6 +23,7 @@ class _ChatState extends State<Chat> {
     final request = ChatCompleteText(
         messages: messagesProvider
             .map((e) {
+              print('provider ${e.message.content}');
               return e.message.toJson();
             })
             .toList()
