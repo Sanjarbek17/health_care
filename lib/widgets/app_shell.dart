@@ -74,31 +74,47 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomAppBar(
-        height: 60,
+        height: 80,
         elevation: 20,
         shape: const CircularNotchedRectangle(),
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             const Spacer(flex: 1),
-            IconButton(
-              icon: Image.asset(_selectedIndex == 0 ? ambulanceActive : ambulance),
-              onPressed: () => _onItemTapped(0),
+            GestureDetector(
+              onTap: () => _onItemTapped(0),
+              child: Container(
+                width: 35,
+                height: 35,
+                child: Image.asset(_selectedIndex == 0 ? ambulanceActive : ambulance, fit: BoxFit.contain),
+              ),
             ),
             const Spacer(flex: 2),
-            IconButton(
-              icon: Image.asset(_selectedIndex == 1 ? spravochnikActive : spravochnik),
-              onPressed: () => _onItemTapped(1),
+            GestureDetector(
+              onTap: () => _onItemTapped(1),
+              child: Container(
+                width: 35,
+                height: 35,
+                child: Image.asset(_selectedIndex == 1 ? spravochnikActive : spravochnik, fit: BoxFit.contain),
+              ),
             ),
             const Spacer(flex: 4),
-            IconButton(
-              icon: Image.asset(_selectedIndex == 2 ? infoActive : info),
-              onPressed: () => _onItemTapped(2),
+            GestureDetector(
+              onTap: () => _onItemTapped(2),
+              child: Container(
+                width: 35,
+                height: 35,
+                child: Image.asset(_selectedIndex == 2 ? infoActive : info, fit: BoxFit.contain),
+              ),
             ),
             const Spacer(flex: 2),
-            IconButton(
-              icon: Image.asset(_selectedIndex == 3 ? profileActive : profile),
-              onPressed: () => _onItemTapped(3),
+            GestureDetector(
+              onTap: () => _onItemTapped(3),
+              child: Container(
+                width: 35,
+                height: 35,
+                child: Image.asset(_selectedIndex == 3 ? profileActive : profile, fit: BoxFit.contain),
+              ),
             ),
             const Spacer(flex: 1),
           ],
