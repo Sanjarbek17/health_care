@@ -12,6 +12,7 @@ import 'screens/catalog/article_detail_screen.dart';
 import 'screens/catalog/articles.dart';
 import 'screens/catalog/catalog_screen.dart';
 import 'screens/catalog/constant_infos.dart';
+import 'screens/chatgpt_screen.dart';
 import 'screens/info/info_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/profile/editing_profile.dart';
@@ -119,7 +120,13 @@ class _MainRouteState extends State<MainRoute> {
                 ],
               ),
             ],
-          )
+          ),
+          // Chat route outside ShellRoute - no persistent shell
+          GoRoute(
+            path: '/chat',
+            name: Chat.routeName,
+            builder: (context, state) => const Chat(),
+          ),
         ]),
       ),
     );

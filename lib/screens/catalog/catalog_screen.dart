@@ -89,7 +89,7 @@ class CatalogScreen extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
+            context.goNamed(Chat.routeName);
           },
           backgroundColor: Colors.red,
           child: const Icon(Icons.help_outline, color: Colors.white),
