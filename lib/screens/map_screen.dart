@@ -174,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
 
       // If navigation mode is active, move camera to follow user
       if (navigationMode) {
-        _mapController.move(LatLng(_userLat, _userLng), 18);
+        _mapController.move(LatLng(_userLat, _userLng), 15);
       }
     });
   }
@@ -195,19 +195,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   /// Toggles the navigation mode state and updates the UI accordingly.
   ///
   /// When navigation mode is enabled, this method triggers the following actions:
-  /// - Moves the map camera to the user's current location with zoom level 18.
+  /// - Moves the map camera to the user's current location with zoom level 15.
   /// - Enables continuous camera tracking of the user's position through location stream.
   ///
   /// This method should be called when the user chooses to take an ambulance or start navigation.
-  void takeAmbulance() {
+  void takeAmbulance() async {
     setState(
       () {
         navigationMode = !navigationMode;
       },
     );
     if (navigationMode) {
-      // Move camera to user's current location with zoom level 18
-      _mapController.move(LatLng(_userLat, _userLng), 18);
+      // Get current location first, then move camera
+      try {
+        Position currentPosition = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        _userLat = currentPosition.latitude;
+        _userLng = currentPosition.longitude;
+
+        // Move camera to user's current location with zoom level 15
+        _mapController.move(LatLng(_userLat, _userLng), 15);
+      } catch (e) {
+        // Fallback to stored location if getting current location fails
+        _mapController.move(LatLng(_userLat, _userLng), 15);
+      }
     }
   }
 
