@@ -36,10 +36,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   late int pointerCount;
 
   late StreamController<double?> _followCurrentLocationStreamController;
-  late StreamController<void> _turnHeadingUpStreamController;
+  late MapController _mapController;
 
   double _currentLat = 39.68056955590667;
   double _currentLng = 66.94095809907301;
+  double _userLat = 39.68056955590667;
+  double _userLng = 66.94095809907301;
   late FirebaseMessaging messaging;
 
   @override
@@ -146,9 +148,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     pointerCount = 0;
 
     _followCurrentLocationStreamController = StreamController<double?>();
-    _turnHeadingUpStreamController = StreamController<void>();
+    _mapController = MapController();
     determinePosition();
     statusPermission();
+    _startLocationTracking();
   }
 
   @override
@@ -158,6 +161,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     positionStreamController.close();
     headingStreamController.close();
     super.dispose();
+  }
+
+  void _startLocationTracking() async {
+    // Track user's real location continuously
+    Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).listen((Position position) {
+      _userLat = position.latitude;
+      _userLng = position.longitude;
+
+      // If navigation mode is active, move camera to follow user
+      if (navigationMode) {
+        _mapController.move(LatLng(_userLat, _userLng), 18);
+      }
+    });
   }
 
   void nearestAmbulance(Function func) {
@@ -173,6 +194,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     });
   }
 
+  /// Toggles the navigation mode state and updates the UI accordingly.
+  ///
+  /// When navigation mode is enabled, this method triggers the following actions:
+  /// - Moves the map camera to the user's current location with zoom level 18.
+  /// - Enables continuous camera tracking of the user's position through location stream.
+  ///
+  /// This method should be called when the user chooses to take an ambulance or start navigation.
   void takeAmbulance() {
     setState(
       () {
@@ -180,8 +208,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
       },
     );
     if (navigationMode) {
-      _followCurrentLocationStreamController.add(18);
-      _turnHeadingUpStreamController.add(null);
+      // Move camera to user's current location with zoom level 18
+      _mapController.move(LatLng(_userLat, _userLng), 18);
     }
   }
 
@@ -267,6 +295,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           // map widget
           Expanded(
             child: FlutterMap(
+              mapController: _mapController,
               options: MapOptions(
                 initialCenter: LatLng(39.6548, 66.9597),
                 initialZoom: 13,
