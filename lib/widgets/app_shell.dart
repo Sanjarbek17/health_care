@@ -72,6 +72,7 @@ class _AppShellState extends State<AppShell> {
     final smsNumber = Uri.parse('sms:103');
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: widget.child,
       bottomNavigationBar: BottomAppBar(
         height: 80,

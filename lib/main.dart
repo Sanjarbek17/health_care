@@ -119,13 +119,13 @@ class _MainRouteState extends State<MainRoute> {
                   ),
                 ],
               ),
+              // Chat route moved inside ShellRoute for proper navigation
+              GoRoute(
+                path: '/chat',
+                name: Chat.routeName,
+                builder: (context, state) => const Chat(),
+              ),
             ],
-          ),
-          // Chat route outside ShellRoute - no persistent shell
-          GoRoute(
-            path: '/chat',
-            name: Chat.routeName,
-            builder: (context, state) => const Chat(),
           ),
         ]),
       ),
