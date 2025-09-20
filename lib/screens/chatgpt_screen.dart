@@ -1,7 +1,7 @@
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart' hide Assistant;
 import 'package:flutter/material.dart';
-import 'package:health_care/models/message_model.dart';
-import 'package:health_care/widgets/chatgpt_widget.dart';
+import '../models/message_model.dart';
+import '../widgets/chatgpt_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/message_provider.dart';
@@ -24,18 +24,23 @@ class _ChatState extends State<Chat> {
         messages: messagesProvider
             .map((e) {
               print('provider ${e.message.content}');
-              return e.message.toJson();
+              return {
+                'role': e.message.role,
+                'content': e.message.content,
+              };
             })
             .toList()
             .reversed
             .toList(),
         maxToken: 150,
-        model: ChatModel.gptTurbo);
+        model: Gpt4ChatModel());
 
     openAI.onChatCompletionSSE(request: request).listen((it) {
-      messagesProvider[0].message.content += it.choices.last.message?.content ?? '';
-      setState(() {});
-      debugPrint(it.choices.last.message?.content);
+      if (it.choices?.isNotEmpty == true) {
+        messagesProvider[0].message.content += it.choices?.last.message?.content ?? '';
+        setState(() {});
+        debugPrint(it.choices?.last.message?.content);
+      }
     });
   }
 

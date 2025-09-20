@@ -8,12 +8,12 @@ import 'package:provider/provider.dart';
 import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
 import '../chatgpt_screen.dart';
-import '/providers/main_provider.dart';
-import '/screens/catalog/articles.dart';
-import '/screens/catalog/constant_infos.dart';
-import '/screens/constants.dart';
-import '/screens/map_screen.dart';
-import '/style/constant.dart';
+import '../../providers/main_provider.dart';
+import 'articles.dart';
+import 'constant_infos.dart';
+import '../constants.dart';
+import '../map_screen.dart';
+import '../../style/constant.dart';
 import '../../providers/translation_provider.dart';
 
 class CatalogScreen extends StatelessWidget {

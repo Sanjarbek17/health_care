@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:health_care/providers/message_provider.dart';
+import 'providers/message_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
-import '/providers/main_provider.dart';
-import '/providers/translation_provider.dart';
-import '/screens/catalog/article_detail_screen.dart';
-import '/screens/catalog/articles.dart';
-import '/screens/catalog/catalog_screen.dart';
-import '/screens/catalog/constant_infos.dart';
-import '/screens/info/info_screen.dart';
-import '/screens/map_screen.dart';
-import '/screens/profile/editing_profile.dart';
-import '/screens/profile/profil_screen.dart';
-import './style/main_style.dart';
+import 'providers/main_provider.dart';
+import 'providers/translation_provider.dart';
+import 'screens/catalog/article_detail_screen.dart';
+import 'screens/catalog/articles.dart';
+import 'screens/catalog/catalog_screen.dart';
+import 'screens/catalog/constant_infos.dart';
+import 'screens/info/info_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/profile/editing_profile.dart';
+import 'screens/profile/profil_screen.dart';
+import 'style/main_style.dart';
 import 'auth/firebase_options.dart';
 import 'screens/info/info_detail.dart';
 

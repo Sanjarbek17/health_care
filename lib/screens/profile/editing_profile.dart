@@ -13,7 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '/screens/profile/profil_screen.dart';
+import 'profil_screen.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';

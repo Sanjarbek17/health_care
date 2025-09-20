@@ -12,8 +12,8 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
 import '../constants.dart';
-import '/screens/map_screen.dart';
-import '/screens/profile/editing_profile.dart';
+import '../map_screen.dart';
+import 'editing_profile.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
 

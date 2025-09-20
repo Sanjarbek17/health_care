@@ -35,8 +35,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   late bool navigationMode;
   late int pointerCount;
 
-  late FollowOnLocationUpdate _followOnLocationUpdate;
-  late TurnOnHeadingUpdate _turnOnHeadingUpdate;
   late StreamController<double?> _followCurrentLocationStreamController;
   late StreamController<void> _turnHeadingUpStreamController;
 
@@ -147,8 +145,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     navigationMode = false;
     pointerCount = 0;
 
-    _followOnLocationUpdate = FollowOnLocationUpdate.never;
-    _turnOnHeadingUpdate = TurnOnHeadingUpdate.never;
     _followCurrentLocationStreamController = StreamController<double?>();
     _turnHeadingUpStreamController = StreamController<void>();
     determinePosition();
@@ -181,8 +177,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
     setState(
       () {
         navigationMode = !navigationMode;
-        _followOnLocationUpdate = navigationMode ? FollowOnLocationUpdate.always : FollowOnLocationUpdate.never;
-        _turnOnHeadingUpdate = navigationMode ? TurnOnHeadingUpdate.always : TurnOnHeadingUpdate.never;
       },
     );
     if (navigationMode) {
@@ -274,33 +268,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-                center: LatLng(39.6548, 66.9597),
-                zoom: 13,
+                initialCenter: LatLng(39.6548, 66.9597),
+                initialZoom: 13,
+                interactionOptions: const InteractionOptions(
+                  flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+                ),
               ),
-              nonRotatedChildren: [
-                Positioned(
-                  right: 20,
-                  bottom: 20,
-                  child: FloatingActionButton(
-                    backgroundColor: navigationMode ? Colors.blue : Colors.grey,
-                    foregroundColor: Colors.white,
-                    onPressed: () {
-                      takeAmbulance();
-                    },
-                    child: const Icon(
-                      Icons.navigation_outlined,
-                    ),
-                  ),
-                )
-              ],
               children: [
                 TileLayer(
                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                   userAgentPackageName: 'com.example.app',
                 ),
                 PolylineLayer(
-                  polylineCulling: false,
                   polylines: [
                     Polyline(points: polylinePoints, color: Colors.blue, strokeWidth: 4),
                   ],
@@ -331,11 +310,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                     markerSize: Size(40, 40),
                     markerDirection: MarkerDirection.heading,
                   ),
-                  followCurrentLocationStream: _followCurrentLocationStreamController.stream,
-                  turnHeadingUpLocationStream: _turnHeadingUpStreamController.stream,
-                  followOnLocationUpdate: _followOnLocationUpdate,
-                  turnOnHeadingUpdate: _turnOnHeadingUpdate,
                 ),
+                // Floating action button overlay
+                Positioned(
+                  right: 20,
+                  bottom: 20,
+                  child: FloatingActionButton(
+                    backgroundColor: navigationMode ? Colors.blue : Colors.grey,
+                    foregroundColor: Colors.white,
+                    onPressed: () {
+                      takeAmbulance();
+                    },
+                    child: const Icon(
+                      Icons.navigation_outlined,
+                    ),
+                  ),
+                )
               ],
             ),
           ),

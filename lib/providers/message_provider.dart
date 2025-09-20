@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:health_care/models/message_model.dart';
+import '../models/message_model.dart';
 
 class MessagesProvider extends ChangeNotifier {
   final List<MessageProvider> _messages = [

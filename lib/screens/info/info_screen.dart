@@ -3,13 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:health_care/screens/chatgpt_screen.dart';
+import '../chatgpt_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
 import '../constants.dart';
-import '/screens/map_screen.dart';
+import '../map_screen.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
