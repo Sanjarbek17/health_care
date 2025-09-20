@@ -19,6 +19,7 @@ import 'screens/profile/profil_screen.dart';
 import 'style/main_style.dart';
 import 'auth/firebase_options.dart';
 import 'screens/info/info_detail.dart';
+import 'widgets/app_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,18 +58,21 @@ class _MainRouteState extends State<MainRoute> {
         debugShowCheckedModeBanner: false,
         theme: theme,
         routerConfig: GoRouter(routes: [
-          GoRoute(
-            path: '/',
-            name: HomeScreen.routeName,
-            builder: (context, state) => HomeScreen(),
+          ShellRoute(
+            builder: (context, state, child) => AppShell(child: child),
             routes: [
               GoRoute(
-                path: 'catalog',
+                path: '/',
+                name: HomeScreen.routeName,
+                builder: (context, state) => HomeScreen(),
+              ),
+              GoRoute(
+                path: '/catalog',
                 name: CatalogScreen.routeName,
                 builder: (context, state) => CatalogScreen(),
                 routes: [
                   GoRoute(
-                      path: 'articles',
+                      path: '/articles',
                       name: Articles.routeName,
                       builder: (context, state) => Articles(
                             name: (state.extra as Map<String, Object>)['name'].toString(),
@@ -76,7 +80,7 @@ class _MainRouteState extends State<MainRoute> {
                           ),
                       routes: [
                         GoRoute(
-                          path: 'article-detail',
+                          path: '/article-detail',
                           name: ArticleDetailScreen.routeName,
                           builder: (context, state) => ArticleDetailScreen(
                             name: (state.extra as Map<String, Object>)['name'].toString(),
@@ -87,26 +91,26 @@ class _MainRouteState extends State<MainRoute> {
                 ],
               ),
               GoRoute(
-                path: 'info',
+                path: '/info',
                 name: InfoScreen.routeName,
                 builder: (context, state) => InfoScreen(),
                 routes: [
                   GoRoute(
-                    path: 'info-detail',
+                    path: '/info-detail',
                     name: InfoDetail.routeName,
                     builder: (context, state) => const InfoDetail(),
                   ),
                 ],
               ),
               GoRoute(
-                path: 'profile',
+                path: '/profile',
                 name: ProfilScreen.routeName,
                 builder: (context, state) => ProfilScreen(
                   image: state.extra != null ? state.extra as File : null,
                 ),
                 routes: [
                   GoRoute(
-                    path: 'editing',
+                    path: '/editing',
                     name: EditingProfile.routeName,
                     builder: (context, state) => EditingProfile(
                       image: state.extra != null ? state.extra as File : null,

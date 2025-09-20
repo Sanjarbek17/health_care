@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../../widgets/functions.dart';
 import '../../widgets/widgets.dart';
-import '../constants.dart';
 import '../map_screen.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
@@ -80,7 +79,6 @@ class InfoScreen extends StatelessWidget {
                 )),
           ],
         ),
-        bottomNavigationBar: const BottomBar(first: ambulance, second: spravochnik, third: infoActive, fourth: profile),
         floatingActionButton: WidgetSpeedDial(
           language: language,
           width: width,

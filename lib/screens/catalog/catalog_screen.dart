@@ -1,18 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../widgets/functions.dart';
-import '../../widgets/widgets.dart';
 import '../chatgpt_screen.dart';
 import '../../providers/main_provider.dart';
 import 'articles.dart';
 import 'constant_infos.dart';
 import '../constants.dart';
-import '../map_screen.dart';
 import '../../style/constant.dart';
 import '../../providers/translation_provider.dart';
 
@@ -23,7 +19,6 @@ class CatalogScreen extends StatelessWidget {
   final smsNumber = Uri.parse('sms:103');
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     // Names list Providers
     final list = Provider.of<MainProvider>(context, listen: false).names;
     final listUz = Provider.of<MainProviderUz>(context, listen: false).names;
@@ -105,26 +100,6 @@ class CatalogScreen extends StatelessWidget {
                 )),
           ],
         ),
-        bottomNavigationBar: const BottomBar(first: ambulance, second: spravochnikActive, third: info, fourth: profile),
-        floatingActionButton: WidgetSpeedDial(
-          language: language,
-          width: width,
-          smsNumber: smsNumber,
-          onTap: () async {
-            // get mapprovider
-            final mapProvider = Provider.of<MapProvider>(context, listen: false);
-            Position p = await determinePosition();
-            sendMessage({'position': p.toJson()});
-            print('send message');
-
-            // ignore: use_build_context_synchronously
-            context.goNamed(
-              HomeScreen.routeName,
-              extra: mapProvider.isRun,
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

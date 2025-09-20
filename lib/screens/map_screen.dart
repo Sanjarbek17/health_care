@@ -13,9 +13,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';
-import '../providers/translation_provider.dart';
 import '../widgets/functions.dart';
-import '../widgets/widgets.dart';
 import 'constants.dart';
 
 class HomeScreen extends StatefulWidget with ChangeNotifier {
@@ -246,17 +244,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     // get driver location provider
     final driverLocationProvider = Provider.of<DriverLocationProvider>(context);
-    // Language Provider
-    final language = Provider.of<Translate>(context, listen: false);
-    // get mapprovider
-    // final mapProvider = Provider.of<MapProvider>(context, listen: false);
-    // if (!mapProvider.isRun) {
-    //   print('car is running');
-    //   nearestAmbulance(mapProvider.makeItZero);
-    //   mapProvider.addOne();
-    // }
-
-    final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
@@ -362,23 +349,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
           ),
         ]),
       ),
-      bottomNavigationBar: const BottomBar(first: ambulanceActive, second: spravochnik, third: info, fourth: profile),
-      floatingActionButton: WidgetSpeedDial(
-          language: language,
-          width: width,
-          smsNumber: smsNumber,
-          // onTap: () {
-          //   if (!mapProvider.isRun) {
-          //     print('run');
-          //     nearestAmbulance(mapProvider.makeItZero);
-          //   }
-          // },
-          onTap: () async {
-            Position p = await determinePosition();
-            sendMessage({'position': p.toJson()});
-            print('send message');
-          }),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
