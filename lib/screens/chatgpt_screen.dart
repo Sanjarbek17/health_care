@@ -7,6 +7,8 @@ import '../utils/api_config.dart';
 
 import '../providers/message_provider.dart';
 
+/// Chat screen with secure API key management
+/// API keys are loaded from environment variables for security
 class Chat extends StatefulWidget {
   const Chat({super.key});
   static const routeName = 'chat';
