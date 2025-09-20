@@ -1,14 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import '../chatgpt_screen.dart';
 import 'package:provider/provider.dart';
 
-import '../../widgets/functions.dart';
-import '../../widgets/widgets.dart';
-import '../map_screen.dart';
 import '../../providers/main_provider.dart';
 import '../../providers/translation_provider.dart';
 import '../../style/constant.dart';
@@ -23,7 +19,7 @@ class InfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
+    // final width = MediaQuery.of(context).size.width;
     final list = Provider.of<MainProvider>(context).uderjeniya;
     final listUz = Provider.of<MainProviderUz>(context).uderjeniya;
     // Language Provider
@@ -37,67 +33,42 @@ class InfoScreen extends StatelessWidget {
             style: appBarStyle,
           ),
         ),
-        body: Stack(
+        body: ListView(
           children: [
-            ListView(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  height: height * 0.15,
-                  child: Image.asset('assets/doctors_get_in_ambulance.jpg', fit: BoxFit.fitWidth),
-                ),
-                const Divider(),
-                ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => ListTile(
-                    onTap: () {
-                      context.goNamed(InfoDetail.routeName);
-                    },
-                    title: Text(
-                      language.isRussian ? list[index] : listUz[index],
-                      style: listTilesStyle,
-                    ),
-                    subtitle: Text(
-                      language.isRussian ? 'Самаркандской области' : 'Samarqand viloyati',
-                      style: listTilesSubtitleStyle,
-                    ),
-                  ),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemCount: language.isRussian ? list.length : listUz.length,
-                )
-              ],
+            SizedBox(
+              width: double.infinity,
+              height: height * 0.15,
+              child: Image.asset('assets/doctors_get_in_ambulance.jpg', fit: BoxFit.fitWidth),
             ),
-            Positioned(
-                bottom: 35,
-                right: 35,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
-                  },
-                  icon: const Icon(Icons.help_outline, color: Colors.red, size: 60),
-                )),
+            const Divider(),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  context.goNamed(InfoDetail.routeName);
+                },
+                title: Text(
+                  language.isRussian ? list[index] : listUz[index],
+                  style: listTilesStyle,
+                ),
+                subtitle: Text(
+                  language.isRussian ? 'Самаркандской области' : 'Samarqand viloyati',
+                  style: listTilesSubtitleStyle,
+                ),
+              ),
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: language.isRussian ? list.length : listUz.length,
+            )
           ],
         ),
-        floatingActionButton: WidgetSpeedDial(
-          language: language,
-          width: width,
-          smsNumber: smsNumber,
-          onTap: () async {
-            // get mapprovider
-            final mapProvider = Provider.of<MapProvider>(context, listen: false);
-            Position p = await determinePosition();
-            sendMessage({'position': p.toJson()});
-            print('send message');
-
-            // ignore: use_build_context_synchronously
-            context.goNamed(
-              HomeScreen.routeName,
-              extra: mapProvider.isRun,
-            );
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
           },
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.help_outline, color: Colors.white),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

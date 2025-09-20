@@ -37,68 +37,62 @@ class CatalogScreen extends StatelessWidget {
             style: appBarStyle,
           ),
         ),
-        body: Stack(
+        body: ListView(
           children: [
-            ListView(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height / 6,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          language.isRussian ? 'Первая помощь' : 'Birinchi yordam',
-                          style: const TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          language.isRussian ? '11 статей' : '11 ta maqola',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+            Container(
+              height: MediaQuery.of(context).size.height / 6,
+              decoration: const BoxDecoration(
+                image: DecorationImage(fit: BoxFit.fitWidth, image: AssetImage(spravochnikBackground)),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      language.isRussian ? 'Первая помощь' : 'Birinchi yordam',
+                      style: const TextStyle(fontSize: 35, color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                  ),
+                    Text(
+                      language.isRussian ? '11 статей' : '11 ta maqola',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => ListTile(
-                    onTap: () {
-                      context.goNamed(
-                        Articles.routeName,
-                        extra: {
-                          'name': (language.isRussian ? list : listUz)[index],
-                          'index': index,
-                        },
-                      );
-                    },
-                    title: Text(
-                      (language.isRussian ? list : listUz)[index],
-                      style: listTilesStyle,
-                    ),
-                    subtitle: Text(
-                      language.isRussian ? '1 статья' : '1 ta maqola',
-                      style: listTilesSubtitleStyle,
-                    ),
-                  ),
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemCount: (language.isRussian ? list : listUz).length,
-                ),
-              ],
+              ),
             ),
-            Positioned(
-                bottom: 35,
-                right: 35,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
-                  },
-                  icon: const Icon(Icons.help_outline, color: Colors.red, size: 60),
-                )),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) => ListTile(
+                onTap: () {
+                  context.goNamed(
+                    Articles.routeName,
+                    extra: {
+                      'name': (language.isRussian ? list : listUz)[index],
+                      'index': index,
+                    },
+                  );
+                },
+                title: Text(
+                  (language.isRussian ? list : listUz)[index],
+                  style: listTilesStyle,
+                ),
+                subtitle: Text(
+                  language.isRussian ? '1 статья' : '1 ta maqola',
+                  style: listTilesSubtitleStyle,
+                ),
+              ),
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: (language.isRussian ? list : listUz).length,
+            ),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const Chat()));
+          },
+          backgroundColor: Colors.red,
+          child: const Icon(Icons.help_outline, color: Colors.white),
         ),
       ),
     );
