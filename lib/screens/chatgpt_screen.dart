@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/message_model.dart';
 import '../widgets/chatgpt_widget.dart';
 import 'package:provider/provider.dart';
+import '../utils/api_config.dart';
 
 import '../providers/message_provider.dart';
 
@@ -15,33 +16,89 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  final openAI = OpenAI.instance.build(token: 'YOUR_API_KEY_HERE', baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)), enableLog: true);
+  late final OpenAI? openAI;
   TextEditingController controller = TextEditingController();
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeOpenAI();
+  }
+
+  void _initializeOpenAI() {
+    try {
+      if (!ApiConfig.isOpenAIConfigured) {
+        setState(() {
+          errorMessage = 'OpenAI API key not found. Please set OPENAI_API_KEY in your .env file.';
+        });
+        openAI = null;
+        return;
+      }
+
+      openAI = OpenAI.instance.build(
+        token: ApiConfig.openAIApiKey!,
+        baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 30)),
+        enableLog: true,
+      );
+
+      setState(() {
+        errorMessage = null;
+      });
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Failed to initialize OpenAI: ${e.toString()}';
+      });
+      openAI = null;
+    }
+  }
 
   void chatCompleteWithSSE() {
-    List<MessageProvider> messagesProvider = Provider.of<MessagesProvider>(context, listen: false).messages;
-    final request = ChatCompleteText(
-        messages: messagesProvider
-            .map((e) {
-              print('provider ${e.message.content}');
-              return {
-                'role': e.message.role,
-                'content': e.message.content,
-              };
-            })
-            .toList()
-            .reversed
-            .toList(),
-        maxToken: 150,
-        model: Gpt4ChatModel());
+    if (openAI == null) {
+      setState(() {
+        errorMessage = 'OpenAI is not properly initialized. Please check your API key.';
+      });
+      return;
+    }
 
-    openAI.onChatCompletionSSE(request: request).listen((it) {
-      if (it.choices?.isNotEmpty == true) {
-        messagesProvider[0].message.content += it.choices?.last.message?.content ?? '';
-        setState(() {});
-        debugPrint(it.choices?.last.message?.content);
-      }
-    });
+    try {
+      List<MessageProvider> messagesProvider = Provider.of<MessagesProvider>(context, listen: false).messages;
+      final request = ChatCompleteText(
+          messages: messagesProvider
+              .map((e) {
+                print('provider ${e.message.content}');
+                return {
+                  'role': e.message.role,
+                  'content': e.message.content,
+                };
+              })
+              .toList()
+              .reversed
+              .toList(),
+          maxToken: 150,
+          model: Gpt4ChatModel());
+
+      openAI!.onChatCompletionSSE(request: request).listen(
+        (it) {
+          if (it.choices?.isNotEmpty == true) {
+            messagesProvider[0].message.content += it.choices?.last.message?.content ?? '';
+            setState(() {});
+            debugPrint(it.choices?.last.message?.content);
+          }
+        },
+        onError: (error) {
+          setState(() {
+            errorMessage = 'Failed to get response: ${error.toString()}';
+          });
+          debugPrint('OpenAI Error: $error');
+        },
+      );
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error sending message: ${e.toString()}';
+      });
+      debugPrint('Chat Error: $e');
+    }
   }
 
   @override
@@ -71,6 +128,30 @@ class _ChatState extends State<Chat> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            // Error message display
+            if (errorMessage != null)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  border: Border.all(color: Colors.red.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red.shade700),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        errorMessage!,
+                        style: TextStyle(color: Colors.red.shade700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(
               child: ListView.builder(
                 reverse: true,
@@ -99,16 +180,25 @@ class _ChatState extends State<Chat> {
                   hintText: 'Ask me a question',
                   suffixIcon: InkWell(
                     splashFactory: NoSplash.splashFactory,
-                    onTap: () {
-                      Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: controller.text, role: 'user')));
-                      Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: '', role: 'assistant')));
+                    onTap: openAI == null || controller.text.trim().isEmpty
+                        ? null
+                        : () {
+                            final messageText = controller.text.trim();
+                            if (messageText.isNotEmpty && openAI != null) {
+                              Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: messageText, role: 'user')));
+                              Provider.of<MessagesProvider>(context, listen: false).addMessage(MessageProvider(message: MessageModel(content: '', role: 'assistant')));
 
-                      setState(() {
-                        controller.clear();
-                      });
-                      chatCompleteWithSSE();
-                    },
-                    child: const Icon(Icons.send, color: Colors.red),
+                              setState(() {
+                                controller.clear();
+                                errorMessage = null; // Clear any previous errors
+                              });
+                              chatCompleteWithSSE();
+                            }
+                          },
+                    child: Icon(
+                      Icons.send,
+                      color: openAI == null || controller.text.trim().isEmpty ? Colors.grey : Colors.red,
+                    ),
                   ),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide(color: Colors.red)),
                 ),
