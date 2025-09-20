@@ -27,7 +27,7 @@ class HomeScreen extends StatefulWidget with ChangeNotifier {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, ChangeNotifier {
-  List<LatLng> polylinePoints = [];
+  List<LatLng> polylinePoints = [LatLng(39.6548, 66.9597)];
 
   late final StreamController<LocationMarkerPosition> positionStreamController;
   late final StreamController<LocationMarkerHeading> headingStreamController;
@@ -276,8 +276,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
               ),
               children: [
                 TileLayer(
-                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  userAgentPackageName: 'com.example.app',
+                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  subdomains: const ['a', 'b', 'c'],
+                  userAgentPackageName: 'com.sanjarbek.health_care',
+                  maxZoom: 17,
                 ),
                 PolylineLayer(
                   polylines: [
