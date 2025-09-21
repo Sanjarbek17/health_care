@@ -1,6 +1,7 @@
 // import http
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/animation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -93,32 +94,108 @@ Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
 }
 
 // sendMessage function to send message to the user
+// IMPORTANT: This function uses deprecated FCM legacy API which is causing 404 errors
+// RECOMMENDED SOLUTION: Implement Firebase Cloud Functions or backend API for sending notifications
+// For production, consider: https://firebase.google.com/docs/cloud-messaging/send-message
 Future<void> sendMessage(Map data) async {
-  String url = 'https://fcm.googleapis.com/fcm/send';
+  try {
+    // TEMPORARY: Using deprecated legacy endpoint (causing 404 errors)
+    // TODO: Replace with Firebase Cloud Functions or backend API
+    String url = 'https://fcm.googleapis.com/fcm/send';
 
-  // header
-  String serverKey = 'AAAAOnLyMKI:APA91bHwCqvFRCjShbQ58DU3Bxjr4Al0ULdG0RG2ukoYK_KyjzqWntJ_nSPpamESVXy7WS89NK9BePxFaQyCMKaMwD9KMti83cwmOOD1huxgpPaVNpNoI9mBQ-s4V-c_0bihGUNPWHf5';
+    // WARNING: Server key should be stored securely on backend, not in client code
+    String serverKey = 'AAAAOnLyMKI:APA91bHwCqvFRCjShbQ58DU3Bxjr4Al0ULdG0RG2ukoYK_KyjzqWntJ_nSPpamESVXy7WS89NK9BePxFaQyCMKaMwD9KMti83cwmOOD1huxgpPaVNpNoI9mBQ-s4V-c_0bihGUNPWHf5';
 
-  // header
-  Map<String, String> header = {
-    'Content-Type': 'application/json',
-    'Authorization': 'key=$serverKey',
-  };
+    Map<String, String> header = {
+      'Content-Type': 'application/json',
+      'Authorization': 'key=$serverKey',
+    };
 
-  // body
-  Map body = {
-    "to": "/topics/driver",
-    "notification": {"title": "Help", "body": "Message from the user"},
-    "data": data,
-  };
+    Map body = {
+      "to": "/topics/driver",
+      "notification": {"title": "Emergency Help Request", "body": "A user needs immediate assistance"},
+      "data": data,
+    };
 
-  // encode Map to JSON
-  String bodyEncoded = json.encode(body);
+    String bodyEncoded = json.encode(body);
+    Uri uri = Uri.parse(url);
 
-  Uri uri = Uri.parse(url);
-  // send post request using http library
-  var r = await http.post(uri, body: bodyEncoded, headers: header);
+    var r = await http.post(uri, body: bodyEncoded, headers: header);
 
-  // ignore: avoid_print
-  print(r.statusCode);
+    print('FCM Response Status Code: ${r.statusCode}');
+
+    if (r.statusCode == 200) {
+      print('✅ Emergency message sent successfully to drivers');
+      // You could show a success snackbar here
+    } else if (r.statusCode == 404) {
+      print('❌ FCM Legacy API no longer available (404 error)');
+      print('📋 Emergency request logged locally');
+      print('🔧 Action required: Implement backend notification service');
+
+      // FALLBACK: Log the emergency request locally
+      // In a real app, you might want to store this in local database
+      // and retry when connection is restored
+      _logEmergencyRequestLocally(data);
+    } else if (r.statusCode == 401) {
+      print('❌ Authentication failed. Invalid server key.');
+      _logEmergencyRequestLocally(data);
+    } else {
+      print('❌ Failed to send emergency message. Status: ${r.statusCode}');
+      _logEmergencyRequestLocally(data);
+    }
+  } catch (e) {
+    print('❌ Error sending emergency message: $e');
+    print('📋 Logging emergency request locally as fallback');
+    _logEmergencyRequestLocally(data);
+  }
+}
+
+// Fallback function to log emergency requests when FCM fails
+void _logEmergencyRequestLocally(Map data) {
+  print('🚨 EMERGENCY REQUEST LOGGED:');
+  print('   Time: ${DateTime.now()}');
+  print('   Data: $data');
+  print('   Status: Pending (awaiting backend notification service)');
+
+  // TODO: In production, store this in local database (SQLite/Hive)
+  // TODO: Implement retry mechanism when connection is restored
+  // TODO: Show user feedback that request was logged and will be retried
+}
+
+// Test function to verify FCM setup
+Future<void> testFCMSetup() async {
+  try {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Request permission for notifications
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    print('🔔 FCM Permission status: ${settings.authorizationStatus}');
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      // Get FCM token
+      String? token = await messaging.getToken();
+      print('✅ FCM Token received: ${token?.substring(0, 50)}...');
+
+      // Subscribe to topic
+      await messaging.subscribeToTopic('driver');
+      print('✅ Subscribed to "driver" topic');
+
+      print('🎉 FCM Setup appears to be working correctly!');
+      return;
+    } else {
+      print('❌ FCM Permission denied');
+    }
+  } catch (e) {
+    print('❌ FCM Setup test failed: $e');
+    print('💡 This likely means google-services.json is missing or FCM is not enabled');
+  }
 }

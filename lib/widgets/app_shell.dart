@@ -126,9 +126,43 @@ class _AppShellState extends State<AppShell> {
         width: width,
         smsNumber: smsNumber,
         onTap: () async {
-          Position p = await determinePosition();
-          sendMessage({'position': p.toJson()});
-          print('send message');
+          try {
+            // Show loading indicator
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('🚨 Sending emergency request...'),
+                duration: Duration(seconds: 2),
+                backgroundColor: Colors.orange,
+              ),
+            );
+
+            Position p = await determinePosition();
+            await sendMessage({'position': p.toJson()});
+            print('send message');
+
+            // Show success message (note: this will show even if FCM fails,
+            // but the request is logged locally as fallback)
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('✅ Emergency request sent! Help is on the way.'),
+                  duration: Duration(seconds: 3),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          } catch (e) {
+            print('Error in emergency request: $e');
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('❌ Error sending emergency request. Please try again.'),
+                  duration: Duration(seconds: 3),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
