@@ -1,6 +1,12 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiConfig {
+  /// Base URL for the ambulance dispatch API
+  static const String baseUrl = 'http://localhost:8080';
+
+  /// WebSocket URL for real-time communication
+  static const String webSocketUrl = 'ws://localhost:8080';
+
   /// Get OpenAI API key from environment variables
   static String? get openAIApiKey => dotenv.env['OPENAI_API_KEY'];
 
@@ -15,6 +21,12 @@ class ApiConfig {
 
   /// Get database URL (if needed in the future)
   static String? get databaseUrl => dotenv.env['DATABASE_URL'];
+
+  /// API Endpoints
+  static const String patientRegisterEndpoint = '/api/patient/register';
+  static const String patientEmergencyEndpoint = '/api/patient/emergency';
+  static String patientStatusEndpoint(String patientId) => '/api/patient/status/$patientId';
+  static const String systemStatusEndpoint = '/api/system/status';
 
   /// Validate all required environment variables
   static List<String> getMissingKeys() {

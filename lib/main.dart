@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
 import 'providers/main_provider.dart';
+import 'providers/patient_provider.dart';
 import 'providers/translation_provider.dart';
 import 'screens/catalog/article_detail_screen.dart';
 import 'screens/catalog/articles.dart';
@@ -14,6 +15,7 @@ import 'screens/catalog/constant_infos.dart';
 import 'screens/chatgpt_screen.dart';
 import 'screens/info/info_screen.dart';
 import 'screens/map_screen.dart';
+import 'screens/patient_status_screen.dart';
 import 'screens/profile/editing_profile.dart';
 import 'screens/profile/profil_screen.dart';
 import 'style/main_style.dart';
@@ -48,6 +50,7 @@ class _MainRouteState extends State<MainRoute> {
         ChangeNotifierProvider(create: (context) => Translate()),
         ChangeNotifierProvider(create: (context) => DriverLocationProvider()),
         ChangeNotifierProvider(create: (context) => MessagesProvider()),
+        ChangeNotifierProvider(create: (context) => PatientProvider()),
         ChangeNotifierProvider(create: (context) => ProfilScreen()),
       ],
       child: MaterialApp.router(
@@ -119,6 +122,12 @@ class _MainRouteState extends State<MainRoute> {
                 path: '/chat',
                 name: Chat.routeName,
                 builder: (context, state) => const Chat(),
+              ),
+              // Patient status screen
+              GoRoute(
+                path: '/patient-status',
+                name: PatientStatusScreen.routeName,
+                builder: (context, state) => const PatientStatusScreen(),
               ),
             ],
           ),

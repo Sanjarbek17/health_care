@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
 
 import '../screens/catalog/catalog_screen.dart';
 import '../screens/info/info_screen.dart';
@@ -9,8 +8,8 @@ import '../screens/map_screen.dart';
 import '../screens/profile/profil_screen.dart';
 import '../screens/constants.dart';
 import '../providers/translation_provider.dart';
-import '../providers/main_provider.dart';
-import '../widgets/functions.dart';
+import '../models/patient_model.dart';
+import '../widgets/emergency_type_selector.dart';
 import 'widgets.dart';
 
 class AppShell extends StatefulWidget {
@@ -128,57 +127,20 @@ class _AppShellState extends State<AppShell> {
         smsNumber: smsNumber,
         onTap: () async {
           try {
-            // Show loading indicator
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('🚨 Sending emergency request...'),
-                duration: Duration(seconds: 2),
-                backgroundColor: Colors.orange,
-              ),
+            // Show emergency type selector
+            await showEmergencyTypeSelector(
+              context,
+              onEmergencyTypeSelected: (type) {
+                // This will be handled by the PatientProvider
+                print('Emergency type selected: ${type.displayName}');
+              },
             );
-
-            Position p = await determinePosition();
-
-            // Simulate ambulance response with hardcoded data
-            Map<String, dynamic> ambulanceResponse = await simulateAmbulanceResponse({'position': p.toJson()});
-
-            // Enable ambulance display on map
-            final driverProvider = Provider.of<DriverLocationProvider>(context, listen: false);
-            final mapProvider = Provider.of<MapProvider>(context, listen: false);
-
-            // Set ambulance starting location from simulation
-            Map ambulanceData = ambulanceResponse['ambulance'];
-            driverProvider.setLatitude(ambulanceData['lat'], ambulanceData['lng']);
-            driverProvider.setLocationEnabled(true);
-
-            // Trigger ambulance movement if not already running
-            if (!mapProvider.isRun) {
-              mapProvider.addOne();
-            }
-
-            // Send emergency message via WebSocket (placeholder for Flask API)
-            await sendEmergencyMessage({'position': p.toJson()});
-            print('send message');
-
-            // Show success message with ambulance details
-            if (context.mounted) {
-              String ambulanceName = ambulanceData['name'];
-              int arrivalTime = ambulanceResponse['estimatedArrival'];
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('🚑 Ambulance dispatched from $ambulanceName!\nEstimated arrival: $arrivalTime minutes'),
-                  duration: const Duration(seconds: 5),
-                  backgroundColor: Colors.green,
-                ),
-              );
-            }
           } catch (e) {
             print('Error in emergency request: $e');
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('❌ Error sending emergency request. Please try again.'),
+                  content: Text('❌ Error showing emergency options. Please try again.'),
                   duration: Duration(seconds: 3),
                   backgroundColor: Colors.red,
                 ),

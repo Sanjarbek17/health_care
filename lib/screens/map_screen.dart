@@ -12,6 +12,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/main_provider.dart';
+import '../providers/patient_provider.dart';
 import '../widgets/functions.dart';
 import 'constants.dart';
 
@@ -176,6 +177,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   Widget build(BuildContext context) {
     // get driver location provider
     final driverLocationProvider = Provider.of<DriverLocationProvider>(context);
+    final patientProvider = Provider.of<PatientProvider>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
@@ -234,8 +237,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                     Polyline(points: polylinePoints, color: Colors.blue, strokeWidth: 4),
                   ],
                 ),
-                // the ambulance car
-                driverLocationProvider.isLocationEnabled
+                // Show real ambulance location from WebSocket
+                if (patientProvider.currentDriverLocation != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: patientProvider.currentDriverLocation!.toLatLng(),
+                        width: 40,
+                        height: 40,
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.local_hospital,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                // Fallback to old system for backwards compatibility
+                driverLocationProvider.isLocationEnabled && patientProvider.currentDriverLocation == null
                     ? CurrentLocationLayer(
                         positionStream: positionStreamController.stream,
                         headingStream: headingStreamController.stream,
@@ -276,97 +303,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                     ),
                   ),
                 ),
-                // Ambulance status panel
-                if (driverLocationProvider.isLocationEnabled)
+                // Enhanced ambulance status panel with real data
+                if (patientProvider.hasActiveEmergency)
                   Positioned(
                     top: 20,
                     left: 20,
                     right: 20,
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.local_hospital,
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                              const SizedBox(width: 8),
-                              const Expanded(
-                                child: Text(
-                                  '🚑 AMBULANCE DISPATCHED',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Text(
-                                  'EN ROUTE',
-                                  style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'From: Samarkand Central Hospital',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.access_time,
-                                    color: Colors.white70,
-                                    size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    'ETA: ${(8 + (DateTime.now().millisecond % 10))} min',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: _buildEmergencyStatusPanel(patientProvider),
+                  )
+                else if (driverLocationProvider.isLocationEnabled) // Fallback to old panel
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                    child: _buildFallbackStatusPanel(),
                   ),
               ],
             ),
@@ -374,5 +324,310 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
         ]),
       ),
     );
+  }
+
+  /// Build enhanced emergency status panel with real data
+  Widget _buildEmergencyStatusPanel(PatientProvider patientProvider) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _getStatusColor(patientProvider.state),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(
+                _getStatusIcon(patientProvider.state),
+                color: Colors.white,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _getStatusTitle(patientProvider.state),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _getStatusBadge(patientProvider.state),
+                  style: TextStyle(
+                    color: _getStatusColor(patientProvider.state),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (patientProvider.assignedDriver != null || patientProvider.estimatedArrival != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  patientProvider.assignedDriver?.name != null ? 'Driver: ${patientProvider.assignedDriver!.name}' : 'Dispatch in progress...',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                ),
+                if (patientProvider.estimatedArrival != null)
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        color: Colors.white70,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'ETA: ${patientProvider.estimatedArrival} min',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+          if (patientProvider.emergencyStatus.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              patientProvider.emergencyStatus,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 11,
+              ),
+            ),
+          ],
+          // Connection status indicator
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                patientProvider.isSocketConnected ? Icons.wifi : Icons.wifi_off,
+                color: Colors.white70,
+                size: 12,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                patientProvider.isSocketConnected ? 'Connected' : 'Offline',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build fallback status panel for backwards compatibility
+  Widget _buildFallbackStatusPanel() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.local_hospital,
+                color: Colors.white,
+                size: 24,
+              ),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text(
+                  '🚑 AMBULANCE DISPATCHED',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'EN ROUTE',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'From: Samarkand Central Hospital',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                ),
+              ),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.access_time,
+                    color: Colors.white70,
+                    size: 14,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'ETA: ${(8 + (DateTime.now().millisecond % 10))} min',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Get status color based on patient state
+  Color _getStatusColor(PatientState state) {
+    switch (state) {
+      case PatientState.idle:
+      case PatientState.registering:
+      case PatientState.registered:
+        return Colors.blue;
+      case PatientState.requestingEmergency:
+      case PatientState.emergencyRequested:
+        return Colors.orange;
+      case PatientState.driverAssigned:
+      case PatientState.ambulanceEnRoute:
+        return Colors.red;
+      case PatientState.ambulanceArrived:
+        return Colors.green;
+      case PatientState.emergencyCompleted:
+        return Colors.teal;
+      case PatientState.error:
+        return Colors.red[900]!;
+    }
+  }
+
+  /// Get status icon based on patient state
+  IconData _getStatusIcon(PatientState state) {
+    switch (state) {
+      case PatientState.idle:
+      case PatientState.registering:
+      case PatientState.registered:
+        return Icons.person;
+      case PatientState.requestingEmergency:
+      case PatientState.emergencyRequested:
+        return Icons.emergency;
+      case PatientState.driverAssigned:
+      case PatientState.ambulanceEnRoute:
+        return Icons.local_hospital;
+      case PatientState.ambulanceArrived:
+        return Icons.check_circle;
+      case PatientState.emergencyCompleted:
+        return Icons.done_all;
+      case PatientState.error:
+        return Icons.error;
+    }
+  }
+
+  /// Get status title based on patient state
+  String _getStatusTitle(PatientState state) {
+    switch (state) {
+      case PatientState.idle:
+        return 'Ready for Emergency';
+      case PatientState.registering:
+        return 'Registering Patient...';
+      case PatientState.registered:
+        return 'Patient Registered';
+      case PatientState.requestingEmergency:
+        return 'Requesting Emergency...';
+      case PatientState.emergencyRequested:
+        return 'Emergency Request Sent';
+      case PatientState.driverAssigned:
+        return '🚑 AMBULANCE ASSIGNED';
+      case PatientState.ambulanceEnRoute:
+        return '🚑 AMBULANCE EN ROUTE';
+      case PatientState.ambulanceArrived:
+        return '🏥 AMBULANCE ARRIVED';
+      case PatientState.emergencyCompleted:
+        return '✅ EMERGENCY COMPLETED';
+      case PatientState.error:
+        return '❌ ERROR OCCURRED';
+    }
+  }
+
+  /// Get status badge based on patient state
+  String _getStatusBadge(PatientState state) {
+    switch (state) {
+      case PatientState.idle:
+      case PatientState.registered:
+        return 'READY';
+      case PatientState.registering:
+        return 'REGISTERING';
+      case PatientState.requestingEmergency:
+        return 'REQUESTING';
+      case PatientState.emergencyRequested:
+        return 'DISPATCHING';
+      case PatientState.driverAssigned:
+        return 'ASSIGNED';
+      case PatientState.ambulanceEnRoute:
+        return 'EN ROUTE';
+      case PatientState.ambulanceArrived:
+        return 'ARRIVED';
+      case PatientState.emergencyCompleted:
+        return 'COMPLETED';
+      case PatientState.error:
+        return 'ERROR';
+    }
   }
 }
