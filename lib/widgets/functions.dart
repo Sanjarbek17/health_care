@@ -1,7 +1,7 @@
 // import http
 import 'dart:convert';
+import 'dart:math';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/animation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -93,109 +93,87 @@ Future<List<LatLng>> getRoutePoints(LatLng start, LatLng end) async {
   }
 }
 
-// sendMessage function to send message to the user
-// IMPORTANT: This function uses deprecated FCM legacy API which is causing 404 errors
-// RECOMMENDED SOLUTION: Implement Firebase Cloud Functions or backend API for sending notifications
-// For production, consider: https://firebase.google.com/docs/cloud-messaging/send-message
-Future<void> sendMessage(Map data) async {
-  try {
-    // TEMPORARY: Using deprecated legacy endpoint (causing 404 errors)
-    // TODO: Replace with Firebase Cloud Functions or backend API
-    String url = 'https://fcm.googleapis.com/fcm/send';
-
-    // WARNING: Server key should be stored securely on backend, not in client code
-    String serverKey = 'AAAAOnLyMKI:APA91bHwCqvFRCjShbQ58DU3Bxjr4Al0ULdG0RG2ukoYK_KyjzqWntJ_nSPpamESVXy7WS89NK9BePxFaQyCMKaMwD9KMti83cwmOOD1huxgpPaVNpNoI9mBQ-s4V-c_0bihGUNPWHf5';
-
-    Map<String, String> header = {
-      'Content-Type': 'application/json',
-      'Authorization': 'key=$serverKey',
-    };
-
-    Map body = {
-      "to": "/topics/driver",
-      "notification": {"title": "Emergency Help Request", "body": "A user needs immediate assistance"},
-      "data": data,
-    };
-
-    String bodyEncoded = json.encode(body);
-    Uri uri = Uri.parse(url);
-
-    var r = await http.post(uri, body: bodyEncoded, headers: header);
-
-    print('FCM Response Status Code: ${r.statusCode}');
-
-    if (r.statusCode == 200) {
-      print('✅ Emergency message sent successfully to drivers');
-      // You could show a success snackbar here
-    } else if (r.statusCode == 404) {
-      print('❌ FCM Legacy API no longer available (404 error)');
-      print('📋 Emergency request logged locally');
-      print('🔧 Action required: Implement backend notification service');
-
-      // FALLBACK: Log the emergency request locally
-      // In a real app, you might want to store this in local database
-      // and retry when connection is restored
-      _logEmergencyRequestLocally(data);
-    } else if (r.statusCode == 401) {
-      print('❌ Authentication failed. Invalid server key.');
-      _logEmergencyRequestLocally(data);
-    } else {
-      print('❌ Failed to send emergency message. Status: ${r.statusCode}');
-      _logEmergencyRequestLocally(data);
-    }
-  } catch (e) {
-    print('❌ Error sending emergency message: $e');
-    print('📋 Logging emergency request locally as fallback');
-    _logEmergencyRequestLocally(data);
-  }
-}
-
-// Fallback function to log emergency requests when FCM fails
-void _logEmergencyRequestLocally(Map data) {
-  print('🚨 EMERGENCY REQUEST LOGGED:');
+// TODO: Implement WebSocket-based emergency notification system
+// This will be replaced with Flask API + WebSocket implementation
+Future<void> sendEmergencyMessage(Map data) async {
+  print('🚨 Emergency message prepared for WebSocket transmission:');
   print('   Time: ${DateTime.now()}');
   print('   Data: $data');
-  print('   Status: Pending (awaiting backend notification service)');
+  print('   Status: Ready for WebSocket API implementation');
 
-  // TODO: In production, store this in local database (SQLite/Hive)
-  // TODO: Implement retry mechanism when connection is restored
-  // TODO: Show user feedback that request was logged and will be retried
+  // Placeholder for WebSocket implementation
+  // Will be replaced with Flask API call + WebSocket real-time updates
 }
 
-// Test function to verify FCM setup
-Future<void> testFCMSetup() async {
-  try {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
+// Simulate ambulance response with hardcoded locations and timing
+Future<Map<String, dynamic>> simulateAmbulanceResponse(Map emergencyData) async {
+  print('🚨 SIMULATING AMBULANCE RESPONSE');
 
-    // Request permission for notifications
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+  // Hardcoded ambulance starting locations around Samarkand with realistic coordinates
+  List<Map<String, dynamic>> ambulanceStations = [
+    {'id': 'AMB001', 'name': 'Samarkand Central Hospital', 'lat': 39.6548, 'lng': 66.9597, 'status': 'available', 'crew': 'Dr. Alisher, Nurse Dilnoza'},
+    {'id': 'AMB002', 'name': 'Emergency Medical Center', 'lat': 39.6723, 'lng': 66.9447, 'status': 'available', 'crew': 'Dr. Sanjar, Paramedic Aziz'},
+    {'id': 'AMB003', 'name': 'Registan Medical Station', 'lat': 39.6445, 'lng': 66.9708, 'status': 'available', 'crew': 'Dr. Malika, Nurse Feruza'},
+    {'id': 'AMB004', 'name': 'University Hospital', 'lat': 39.6612, 'lng': 66.9301, 'status': 'available', 'crew': 'Dr. Bobur, Paramedic Jasur'},
+    {'id': 'AMB005', 'name': 'City Emergency Station', 'lat': 39.6389, 'lng': 66.9856, 'status': 'available', 'crew': 'Dr. Nilufar, Nurse Kamola'}
+  ];
 
-    print('🔔 FCM Permission status: ${settings.authorizationStatus}');
+  // Get user location from emergency data
+  Map userPosition = emergencyData['position'];
+  double userLat = userPosition['latitude'];
+  double userLng = userPosition['longitude'];
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      // Get FCM token
-      String? token = await messaging.getToken();
-      print('✅ FCM Token received: ${token?.substring(0, 50)}...');
+  print('📍 User location: $userLat, $userLng');
 
-      // Subscribe to topic
-      await messaging.subscribeToTopic('driver');
-      print('✅ Subscribed to "driver" topic');
+  // Find nearest ambulance (simplified calculation)
+  Map<String, dynamic> nearestAmbulance = ambulanceStations[0];
+  double shortestDistance = double.infinity;
 
-      print('🎉 FCM Setup appears to be working correctly!');
-      return;
-    } else {
-      print('❌ FCM Permission denied');
+  for (var ambulance in ambulanceStations) {
+    double distance = _calculateDistance(userLat, userLng, ambulance['lat'], ambulance['lng']);
+
+    if (distance < shortestDistance) {
+      shortestDistance = distance;
+      nearestAmbulance = ambulance;
     }
-  } catch (e) {
-    print('❌ FCM Setup test failed: $e');
-    print('💡 This likely means google-services.json is missing or FCM is not enabled');
   }
+
+  print('🚑 Dispatched: ${nearestAmbulance['name']} (${nearestAmbulance['id']})');
+  print('👨‍⚕️ Crew: ${nearestAmbulance['crew']}');
+  print('📏 Distance: ${shortestDistance.toStringAsFixed(2)} km');
+
+  // Simulate realistic ambulance timing
+  int estimatedArrivalMinutes = (shortestDistance * 1.5).round() + 4; // 1.5 min per km + 4 min prep
+  estimatedArrivalMinutes = estimatedArrivalMinutes.clamp(6, 20); // Between 6-20 minutes
+
+  // Add some realistic factors
+  int timeOfDay = DateTime.now().hour;
+  if (timeOfDay >= 7 && timeOfDay <= 9 || timeOfDay >= 17 && timeOfDay <= 19) {
+    estimatedArrivalMinutes += 2; // Rush hour delay
+    print('⚠️ Rush hour - adding 2 minutes delay');
+  }
+
+  print('⏱️ Estimated arrival: $estimatedArrivalMinutes minutes');
+  print('🚨 Status: AMBULANCE EN ROUTE');
+  print('🔄 Real-time tracking enabled');
+
+  // Return ambulance data for map display
+  return {
+    'ambulance': nearestAmbulance,
+    'userLocation': {'lat': userLat, 'lng': userLng},
+    'estimatedArrival': estimatedArrivalMinutes,
+    'distance': shortestDistance,
+    'dispatchTime': DateTime.now(),
+    'status': 'dispatched',
+    'trackingEnabled': true,
+  };
+}
+
+// Helper function to calculate distance between two points (simplified)
+double _calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+  // Simplified distance calculation (not accounting for Earth's curvature)
+  // For a more accurate calculation, use the Haversine formula
+  double deltaLat = lat2 - lat1;
+  double deltaLng = lng2 - lng1;
+  return sqrt((deltaLat * deltaLat) + (deltaLng * deltaLng)) * 111; // Approximate km
 }

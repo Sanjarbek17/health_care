@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/message_provider.dart';
@@ -18,7 +17,6 @@ import 'screens/map_screen.dart';
 import 'screens/profile/editing_profile.dart';
 import 'screens/profile/profil_screen.dart';
 import 'style/main_style.dart';
-import 'auth/firebase_options.dart';
 import 'screens/info/info_detail.dart';
 import 'widgets/app_shell.dart';
 
@@ -28,9 +26,6 @@ Future<void> main() async {
   // Load environment variables
   await dotenv.load(fileName: ".env");
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MainRoute());
 }
 

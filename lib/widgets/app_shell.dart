@@ -9,6 +9,7 @@ import '../screens/map_screen.dart';
 import '../screens/profile/profil_screen.dart';
 import '../screens/constants.dart';
 import '../providers/translation_provider.dart';
+import '../providers/main_provider.dart';
 import '../widgets/functions.dart';
 import 'widgets.dart';
 
@@ -137,16 +138,37 @@ class _AppShellState extends State<AppShell> {
             );
 
             Position p = await determinePosition();
-            await sendMessage({'position': p.toJson()});
+
+            // Simulate ambulance response with hardcoded data
+            Map<String, dynamic> ambulanceResponse = await simulateAmbulanceResponse({'position': p.toJson()});
+
+            // Enable ambulance display on map
+            final driverProvider = Provider.of<DriverLocationProvider>(context, listen: false);
+            final mapProvider = Provider.of<MapProvider>(context, listen: false);
+
+            // Set ambulance starting location from simulation
+            Map ambulanceData = ambulanceResponse['ambulance'];
+            driverProvider.setLatitude(ambulanceData['lat'], ambulanceData['lng']);
+            driverProvider.setLocationEnabled(true);
+
+            // Trigger ambulance movement if not already running
+            if (!mapProvider.isRun) {
+              mapProvider.addOne();
+            }
+
+            // Send emergency message via WebSocket (placeholder for Flask API)
+            await sendEmergencyMessage({'position': p.toJson()});
             print('send message');
 
-            // Show success message (note: this will show even if FCM fails,
-            // but the request is logged locally as fallback)
+            // Show success message with ambulance details
             if (context.mounted) {
+              String ambulanceName = ambulanceData['name'];
+              int arrivalTime = ambulanceResponse['estimatedArrival'];
+
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('✅ Emergency request sent! Help is on the way.'),
-                  duration: Duration(seconds: 3),
+                SnackBar(
+                  content: Text('🚑 Ambulance dispatched from $ambulanceName!\nEstimated arrival: $arrivalTime minutes'),
+                  duration: const Duration(seconds: 5),
                   backgroundColor: Colors.green,
                 ),
               );

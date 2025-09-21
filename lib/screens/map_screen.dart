@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
@@ -40,91 +39,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
   double _currentLng = 66.94095809907301;
   double _userLat = 39.68056955590667;
   double _userLng = 66.94095809907301;
-  late FirebaseMessaging messaging;
 
   @override
   void initState() {
     super.initState();
 
-    messaging = FirebaseMessaging.instance;
-    messaging.getToken().then((value) {
-      //  fBg22SJITjWIxwTdvkruzW:APA91bE1cAqAT1u6jBHIZY-YntoEX0K6plOTdAXT6yT5z_5hf-O7E3LuK4IJeMPlk-5LwYpynotpnKqHQ5x1lInyfu0xYpsfYOieTw20c8My3EbifxkjCd-FoK0AjM48RCs0bgF70yAu
-      print('fiebase token');
-      print(value);
-    });
-    messaging.unsubscribeFromTopic('driver');
-    messaging.subscribeToTopic('user');
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage event) {
-      // Map position = jsonDecode(event.data['position']);
-
-      DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
-      // change driver location
-      // driver.setLatitude(position['latitude'], position['longitude']);
-      // driver location enabled
-      driver.setLocationEnabled(true);
-
-      final mapProvider = Provider.of<MapProvider>(context, listen: false);
-      if (!mapProvider.isRun) {
-        print('car is running');
-        nearestAmbulance(mapProvider.makeItZero);
-        mapProvider.addOne();
-      }
-
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text(
-                'Ambulance is coming',
-                style: TextStyle(color: Colors.black, fontSize: 20),
-              ),
-              content: Text(event.notification!.body!),
-              actions: [
-                TextButton(
-                  child: const Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage event) {
-      // Map position = jsonDecode(event.data['position']);
-      DriverLocationProvider driver = Provider.of<DriverLocationProvider>(context, listen: false);
-      // change driver location
-      // driver.setLatitude(position['latitude'], position['longitude']);
-      // driver location enabled
-      driver.setLocationEnabled(true);
-      final mapProvider = Provider.of<MapProvider>(context, listen: false);
-      if (!mapProvider.isRun) {
-        print('car is running');
-        nearestAmbulance(mapProvider.makeItZero);
-        mapProvider.addOne();
-      }
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text(
-                'Ambulance is coming',
-                style: TextStyle(color: Colors.black, fontSize: 20),
-              ),
-              content: Text(event.notification!.body!),
-              actions: [
-                TextButton(
-                  child: const Text("Ok"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
-    });
+    // TODO: Replace Firebase messaging with WebSocket connection to Flask API
 
     positionStreamController = StreamController()
       ..add(
@@ -355,7 +275,99 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin, 
                       Icons.navigation_outlined,
                     ),
                   ),
-                )
+                ),
+                // Ambulance status panel
+                if (driverLocationProvider.isLocationEnabled)
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.local_hospital,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  '🚑 AMBULANCE DISPATCHED',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Text(
+                                  'EN ROUTE',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'From: Samarkand Central Hospital',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.access_time,
+                                    color: Colors.white70,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'ETA: ${(8 + (DateTime.now().millisecond % 10))} min',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
